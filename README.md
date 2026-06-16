@@ -1,0 +1,155 @@
+# ai-code-skills
+
+A growing collection of **Agent Skills** for **Claude Code** and **Codex** that review pull requests for **security, performance, and clean code** — and write the results to one evidence-based Markdown report with a merge verdict.
+
+Each skill is self-contained. You pick which ones to install.
+
+## Skills in this repo
+
+| Skill | Reviews | Highlights |
+|---|---|---|
+| **`nextjs-pr-review`** | Next.js / React PRs (App + Pages Router, Next.js 13–16) | Server/Client boundaries, fetch waterfalls, bundle size, Core Web Vitals, `'use cache'`/PPR/`dynamicIO`/`after()`, async `cookies`/`headers`/`params`, Server Actions & data-boundary security |
+| **`laravel-pr-review`** | Laravel / PHP PRs (Laravel 9–12, PHP 8.0–8.4) | Mass assignment, SQL injection, Policies/Gates, CSRF/XSS in Blade, N+1 queries, missing indexes, queues, caching correctness, PSR-12 / SOLID, migration safety |
+
+More skills will be added over time — `list` always shows what's available.
+
+Every review produces **one** Markdown report (`PR_REVIEW.md` by default) with evidence, severity, confidence, rationale, recommendations, verification steps, references, and a merge verdict. Shared features across skills: Quick/Standard/Deep review modes, automatic stack detection, PR-number-aware diffs, and opt-in inline PR comments.
+
+## Install (npm / npx)
+
+You choose which skills to install — installing is never all-or-nothing unless you ask for `--all`.
+
+```bash
+# See what's available
+npx ai-code-skills list
+
+# Install specific skills (user scope, both clients)
+npx ai-code-skills install nextjs-pr-review
+npx ai-code-skills install nextjs-pr-review laravel-pr-review
+
+# Interactive picker (run with no skill names in a terminal)
+npx ai-code-skills install
+
+# Everything
+npx ai-code-skills install --all
+
+# A single client
+npx ai-code-skills install laravel-pr-review --claude
+npx ai-code-skills install laravel-pr-review --codex
+
+# Commit a skill into one repository (project scope)
+npx ai-code-skills install nextjs-pr-review --project --root ./my-app
+
+# Inspect or remove
+npx ai-code-skills where --all
+npx ai-code-skills uninstall laravel-pr-review
+```
+
+Install the CLI globally if you prefer:
+
+```bash
+npm install -g ai-code-skills
+ai-code-skills install nextjs-pr-review
+```
+
+### Install destinations
+
+| Scope | Claude Code | Codex |
+|---|---|---|
+| `--user` (default) | `~/.claude/skills/<skill>/` | `~/.agents/skills/<skill>/` |
+| `--project --root <r>` | `<r>/.claude/skills/<skill>/` | `<r>/.agents/skills/<skill>/` |
+
+Project-scope copies can be committed so every contributor gets the same review rules.
+
+### Without Node
+
+Cloned the repo? The shell installer does the same thing and also requires you to choose:
+
+```bash
+./install.sh --list
+./install.sh --user --both nextjs-pr-review
+./install.sh --user --both --all
+./uninstall.sh laravel-pr-review
+```
+
+## Use
+
+After installing, invoke a skill by name.
+
+### Claude Code
+
+```text
+/nextjs-pr-review Review PR #123 and save the report to docs/reviews/PR-123.md
+/laravel-pr-review Deep review of the current branch against origin/main.
+```
+
+### Codex
+
+```text
+$nextjs-pr-review Review PR #123
+$laravel-pr-review Review the current branch, focus on the auth changes.
+```
+
+Both agents may also activate a skill automatically when asked to review a matching PR.
+
+### Review modes
+
+Mention a mode to control depth (default is **Standard**):
+
+- **Quick** — fast gate for small/low-risk diffs; High/Critical security + correctness only.
+- **Standard** — all phases, all three categories, safe validation, full report.
+- **Deep** — security-sensitive or large diffs; end-to-end tracing, build/test/static-analysis runs, expanded checklists, and a self-audit pass.
+
+### Inline PR comments (opt-in)
+
+Off by default — the report is the deliverable. Ask explicitly to also post findings inline (requires an authenticated `gh`):
+
+```text
+/laravel-pr-review Review PR #123, then post the High/Critical findings as inline comments.
+```
+
+The skills never approve, request changes, or merge on your behalf unless you say so.
+
+## Repository layout
+
+```text
+ai-code-skills/
+├── package.json            # npm package + bin
+├── bin/
+│   └── cli.js              # list / install / uninstall / where (you pick skills)
+├── install.sh              # shell installer (alternative to npx)
+├── uninstall.sh
+├── README.md
+├── CHANGELOG.md
+├── LICENSE
+└── skills/
+    ├── nextjs-pr-review/
+    │   ├── SKILL.md
+    │   ├── assets/PR_REVIEW_REPORT_TEMPLATE.md
+    │   ├── references/{SECURITY,PERFORMANCE,CLEAN_CODE}.md
+    │   └── scripts/{pr-diff.sh,detect-stack.sh,validate-report.py}
+    └── laravel-pr-review/
+        ├── SKILL.md
+        ├── assets/PR_REVIEW_REPORT_TEMPLATE.md
+        ├── references/{SECURITY,PERFORMANCE,CLEAN_CODE}.md
+        └── scripts/{pr-diff.sh,detect-stack.sh,validate-report.py}
+```
+
+## Adding a new skill
+
+1. Create `skills/<your-skill>/SKILL.md` with YAML frontmatter (`name`, `description`, `license`).
+2. Add `references/`, `scripts/`, and `assets/` as needed (the diff/validate scripts are reusable).
+3. That's it — the CLI auto-discovers any directory under `skills/` containing a `SKILL.md`, so `list` and `install` pick it up with no code changes.
+
+## Helper scripts (per skill)
+
+```bash
+skills/<skill>/scripts/pr-diff.sh origin/main      # structured diff
+skills/<skill>/scripts/pr-diff.sh --pr 123          # needs authenticated gh
+skills/<skill>/scripts/detect-stack.sh              # summarize the stack
+python3 skills/<skill>/scripts/validate-report.py PR_REVIEW.md
+```
+
+## License
+
+MIT — see [LICENSE](LICENSE).

@@ -1,0 +1,47 @@
+{
+  "name": "ai-code-skills",
+  "version": "2.0.0",
+  "description": "A collection of Agent Skills for Claude Code and Codex that review pull requests for security, performance, and clean code. Includes Next.js/React and Laravel/PHP reviewers; pick which skills to install.",
+  "bin": {
+    "ai-code-skills": "bin/cli.js"
+  },
+  "type": "commonjs",
+  "files": [
+    "bin/",
+    "skills/",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "test": "node bin/cli.js list >/dev/null && node bin/cli.js --help >/dev/null && python3 skills/nextjs-pr-review/scripts/validate-report.py --self-test && python3 skills/laravel-pr-review/scripts/validate-report.py --self-test"
+  },
+  "keywords": [
+    "code-review",
+    "pull-request",
+    "pr-review",
+    "agent-skill",
+    "claude-code",
+    "codex",
+    "nextjs",
+    "react",
+    "laravel",
+    "php",
+    "security",
+    "performance",
+    "clean-code"
+  ],
+  "author": "Ezzat Malak",
+  "license": "MIT",
+  "homepage": "https://github.com/ezzatmakar/ai-code-skills#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ezzatmakar/ai-code-skills.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ezzatmakar/ai-code-skills/issues"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}
