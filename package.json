@@ -1,6 +1,6 @@
 {
   "name": "ai-code-skills",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A collection of Agent Skills for Claude Code and Codex that review pull requests for security, performance, and clean code. Includes Next.js/React and Laravel/PHP reviewers; pick which skills to install.",
   "bin": {
     "ai-code-skills": "bin/cli.js"
