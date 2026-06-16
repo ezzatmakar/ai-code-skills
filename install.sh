@@ -3,13 +3,17 @@ set -euo pipefail
 
 usage() {
   cat <<'USAGE'
-Usage: ./install.sh [--user|--project] [--both|--codex|--claude] [--all] [skills...] [--root <project-root>]
+Usage: ./install.sh [--user|--project] [--both|--all-clients|--codex|--claude|--opencode] [--all] [skills...] [--root <project-root>]
 
 You must choose which skills to install: name them, or pass --all.
+Client targets: --both (Claude+Codex, default), --all-clients (adds OpenCode),
+or a single --claude / --codex / --opencode. OpenCode also reads ~/.claude/skills,
+so --both already works there; use --opencode for its native path too.
 
 Examples:
   ./install.sh --user --both nextjs-pr-review
-  ./install.sh --user --both --all
+  ./install.sh --user --all-clients --all
+  ./install.sh --user --opencode laravel-pr-review
   ./install.sh --project --both --root /path/to/app laravel-pr-review
   ./install.sh --list
 USAGE
@@ -27,8 +31,10 @@ while [[ $# -gt 0 ]]; do
     --user) scope="user"; shift ;;
     --project) scope="project"; shift ;;
     --both) target_client="both"; shift ;;
+    --all-clients) target_client="all"; shift ;;
     --codex) target_client="codex"; shift ;;
     --claude) target_client="claude"; shift ;;
+    --opencode) target_client="opencode"; shift ;;
     --all) install_all=true; shift ;;
     --list) list_only=true; shift ;;
     --root|--dir|--project-root) project_root="$2"; shift 2 ;;
@@ -81,9 +87,15 @@ if [[ "$scope" == "project" ]]; then
 fi
 
 dest_base() {
-  # $1 = claude|codex
+  # $1 = claude|codex|opencode  (OpenCode differs by scope)
   local client="$1" sub
-  [[ "$client" == "claude" ]] && sub=".claude/skills" || sub=".agents/skills"
+  case "$client" in
+    claude) sub=".claude/skills" ;;
+    codex)  sub=".agents/skills" ;;
+    opencode)
+      if [[ "$scope" == "user" ]]; then sub=".config/opencode/skills"; else sub=".opencode/skills"; fi
+      ;;
+  esac
   if [[ "$scope" == "user" ]]; then echo "$HOME/$sub"; else echo "$project_root/$sub"; fi
 }
 
@@ -96,9 +108,16 @@ install_one() {
   echo "Installed $name ($client): $destination"
 }
 
+clients_for_target() {
+  case "$target_client" in
+    both) echo "codex claude" ;;
+    all)  echo "codex claude opencode" ;;
+    *)    echo "$target_client" ;;
+  esac
+}
+
 for name in "${selected[@]}"; do
-  if [[ "$target_client" == "both" || "$target_client" == "codex" ]]; then install_one "$name" codex; fi
-  if [[ "$target_client" == "both" || "$target_client" == "claude" ]]; then install_one "$name" claude; fi
+  for client in $(clients_for_target); do install_one "$name" "$client"; done
 done
 
 cat <<'DONE'
@@ -106,4 +125,5 @@ cat <<'DONE'
 Installation complete.
 Claude Code: invoke with /<skill-name> (e.g. /nextjs-pr-review).
 Codex:       invoke with $<skill-name> (e.g. $laravel-pr-review).
+OpenCode:    available automatically (it also reads ~/.claude/skills).
 DONE

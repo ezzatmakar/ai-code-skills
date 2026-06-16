@@ -1,6 +1,6 @@
 # ai-code-skills
 
-A growing collection of **Agent Skills** for **Claude Code** and **Codex** that review pull requests for **security, performance, and clean code** — and write the results to one evidence-based Markdown report with a merge verdict.
+A growing collection of **Agent Skills** for **Claude Code**, **Codex**, and **OpenCode** that review pull requests for **security, performance, and clean code** — and write the results to one evidence-based Markdown report with a merge verdict.
 
 Each skill is self-contained. You pick which ones to install.
 
@@ -36,6 +36,10 @@ npx ai-code-skills install --all
 # A single client
 npx ai-code-skills install laravel-pr-review --claude
 npx ai-code-skills install laravel-pr-review --codex
+npx ai-code-skills install laravel-pr-review --opencode
+
+# All three clients at once
+npx ai-code-skills install --all --all-clients
 
 # Commit a skill into one repository (project scope)
 npx ai-code-skills install nextjs-pr-review --project --root ./my-app
@@ -54,12 +58,14 @@ ai-code-skills install nextjs-pr-review
 
 ### Install destinations
 
-| Scope | Claude Code | Codex |
-|---|---|---|
-| `--user` (default) | `~/.claude/skills/<skill>/` | `~/.agents/skills/<skill>/` |
-| `--project --root <r>` | `<r>/.claude/skills/<skill>/` | `<r>/.agents/skills/<skill>/` |
+| Scope | Claude Code | Codex | OpenCode |
+|---|---|---|---|
+| `--user` (default) | `~/.claude/skills/<skill>/` | `~/.agents/skills/<skill>/` | `~/.config/opencode/skills/<skill>/` |
+| `--project --root <r>` | `<r>/.claude/skills/<skill>/` | `<r>/.agents/skills/<skill>/` | `<r>/.opencode/skills/<skill>/` |
 
 Project-scope copies can be committed so every contributor gets the same review rules.
+
+**OpenCode note:** OpenCode natively discovers `SKILL.md` skills and also reads `~/.claude/skills/` and `~/.agents/skills/`. So the default `--both` install already works in OpenCode — invoke skills there the same way. Use `--opencode` (or `--all-clients`) only if you also want the copy in OpenCode's native `~/.config/opencode/skills/` path. Client flags combine, e.g. `--claude --opencode`.
 
 ### Without Node
 

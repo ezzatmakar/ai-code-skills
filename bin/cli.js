@@ -24,9 +24,13 @@ const readline = require("readline");
 const PKG_ROOT = path.resolve(__dirname, "..");
 const SKILLS_DIR = path.join(PKG_ROOT, "skills");
 
+// Each client maps to a skills directory. Most use the same relative path at
+// user and project scope; OpenCode differs (global ~/.config/opencode vs
+// project-local .opencode).
 const CLIENTS = {
-  claude: { label: "Claude Code", dir: ".claude/skills" },
-  codex: { label: "Codex", dir: ".agents/skills" },
+  claude: { label: "Claude Code", userDir: ".claude/skills", projectDir: ".claude/skills" },
+  codex: { label: "Codex", userDir: ".agents/skills", projectDir: ".agents/skills" },
+  opencode: { label: "OpenCode", userDir: ".config/opencode/skills", projectDir: ".opencode/skills" },
 };
 
 function log(msg) {
@@ -121,9 +125,17 @@ function parseArgs(argv) {
       case "--codex":
         selected.add("codex");
         break;
+      case "--opencode":
+        selected.add("opencode");
+        break;
       case "--both":
         selected.add("claude");
         selected.add("codex");
+        break;
+      case "--all-clients":
+        selected.add("claude");
+        selected.add("codex");
+        selected.add("opencode");
         break;
       case "--root":
       case "--dir":
@@ -167,10 +179,16 @@ Options:
   --user                     Install for the current user (default)
   --project                  Install into a repository (use --root to set it)
   --root <path>              Project root for --project (default: current directory)
-  --claude                   Target Claude Code only   (-> <root>/.claude/skills)
-  --codex                    Target Codex only          (-> <root>/.agents/skills)
-  --both                     Target both clients (default)
+  --claude                   Target Claude Code   (-> .claude/skills)
+  --codex                    Target Codex          (-> .agents/skills)
+  --opencode                 Target OpenCode       (-> ~/.config/opencode/skills or .opencode/skills)
+  --both                     Claude Code + Codex (default)
+  --all-clients              Claude Code + Codex + OpenCode
   -h, --help                 Show this help
+
+Client flags combine, e.g. --claude --opencode. The default (--both) already
+works in OpenCode too, since OpenCode also reads ~/.claude/skills; use --opencode
+only if you want the native OpenCode path as well or instead.
 
 Available skills:
 ${list}
@@ -199,10 +217,11 @@ function resolveRoot(opts) {
 
 function destinationsFor(skill, opts) {
   const root = resolveRoot(opts);
+  const dirKey = opts.scope === "user" ? "userDir" : "projectDir";
   return opts.clients.map((client) => ({
     client,
     label: CLIENTS[client].label,
-    path: path.join(root, CLIENTS[client].dir, skill.dir),
+    path: path.join(root, CLIENTS[client][dirKey], skill.dir),
   }));
 }
 

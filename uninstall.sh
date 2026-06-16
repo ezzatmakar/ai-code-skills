@@ -3,7 +3,7 @@ set -euo pipefail
 
 usage() {
   cat <<'USAGE'
-Usage: ./uninstall.sh [--user|--project] [--both|--codex|--claude] [--all] [skills...] [--root <project-root>]
+Usage: ./uninstall.sh [--user|--project] [--both|--all-clients|--codex|--claude|--opencode] [--all] [skills...] [--root <project-root>]
 
 Name the skills to remove, or pass --all.
 USAGE
@@ -20,8 +20,10 @@ while [[ $# -gt 0 ]]; do
     --user) scope="user"; shift ;;
     --project) scope="project"; shift ;;
     --both) target_client="both"; shift ;;
+    --all-clients) target_client="all"; shift ;;
     --codex) target_client="codex"; shift ;;
     --claude) target_client="claude"; shift ;;
+    --opencode) target_client="opencode"; shift ;;
     --all) remove_all=true; shift ;;
     --root|--dir|--project-root) project_root="$2"; shift 2 ;;
     -h|--help) usage; exit 0 ;;
@@ -57,7 +59,13 @@ fi
 
 dest_base() {
   local client="$1" sub
-  [[ "$client" == "claude" ]] && sub=".claude/skills" || sub=".agents/skills"
+  case "$client" in
+    claude) sub=".claude/skills" ;;
+    codex)  sub=".agents/skills" ;;
+    opencode)
+      if [[ "$scope" == "user" ]]; then sub=".config/opencode/skills"; else sub=".opencode/skills"; fi
+      ;;
+  esac
   if [[ "$scope" == "user" ]]; then echo "$HOME/$sub"; else echo "$project_root/$sub"; fi
 }
 
@@ -72,7 +80,14 @@ remove_one() {
   fi
 }
 
+clients_for_target() {
+  case "$target_client" in
+    both) echo "codex claude" ;;
+    all)  echo "codex claude opencode" ;;
+    *)    echo "$target_client" ;;
+  esac
+}
+
 for name in "${selected[@]}"; do
-  if [[ "$target_client" == "both" || "$target_client" == "codex" ]]; then remove_one "$name" codex; fi
-  if [[ "$target_client" == "both" || "$target_client" == "claude" ]]; then remove_one "$name" claude; fi
+  for client in $(clients_for_target); do remove_one "$name" "$client"; done
 done

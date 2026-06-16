@@ -16,9 +16,15 @@ choose which skills to install.
   safety. Ships its own references, report template, and `detect-stack.sh`.
 - **Multi-skill npm CLI** (`bin/cli.js`, package renamed to `ai-code-skills`):
   `list`, `install [skills...]`, `uninstall`, `where`, with `--all`,
-  `--user`/`--project --root`, and `--claude`/`--codex`/`--both`. Installing
-  requires choosing skills by name, `--all`, or the interactive picker. New
-  skills are auto-discovered from `skills/*/SKILL.md` — no code changes needed.
+  `--user`/`--project --root`, and `--claude`/`--codex`/`--opencode`/`--both`/
+  `--all-clients`. Installing requires choosing skills by name, `--all`, or the
+  interactive picker. New skills are auto-discovered from `skills/*/SKILL.md` —
+  no code changes needed.
+- **OpenCode support.** `--opencode` installs to OpenCode's native skills path
+  (`~/.config/opencode/skills/` for user scope, `.opencode/skills/` for project
+  scope); `--all-clients` targets Claude Code + Codex + OpenCode. OpenCode also
+  reads `~/.claude/skills` and `~/.agents/skills`, so the default `--both`
+  install already works there.
 - **`nextjs-pr-review` 2.0**: Quick/Standard/Deep review modes; Next.js 15/16
   coverage (`'use cache'`, PPR, `dynamicIO`, `after()`, async
   `cookies`/`headers`/`params`/`searchParams`, uncached-by-default `fetch`);
