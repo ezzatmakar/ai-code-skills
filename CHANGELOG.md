@@ -3,6 +3,16 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/) and the project uses semantic versioning.
 
+## [2.1.1]
+
+### Changed
+- Rewrote the package description to cover all three skills and supported clients
+  (Claude Code, Codex, OpenCode), including the `pre-push-review` Pass/Warn/Fail
+  scorecard and push-readiness verdict.
+- Generalized the README so the collection is no longer described as PR-only:
+  updated tagline, added Codex usage example, and clarified that inline comments
+  apply to the PR reviewers while `pre-push-review` delivers the scorecard report.
+
 ## [2.1.0]
 
 ### Added

@@ -1,7 +1,7 @@
 {
   "name": "ai-code-skills",
-  "version": "2.1.0",
-  "description": "A collection of Agent Skills for Claude Code and Codex that review code for security, performance, and clean code. Includes Next.js/React and Laravel/PHP PR reviewers and a stack-agnostic pre-push local reviewer; pick which skills to install.",
+  "version": "2.1.1",
+  "description": "Agent Skills for Claude Code, Codex, and OpenCode that review code for security, performance, and clean code, then write one evidence-based Markdown report. Includes Next.js/React and Laravel/PHP pull-request reviewers and a stack-agnostic pre-push reviewer that scores your local changes (Security, Performance, Clean Code) as Pass/Warn/Fail with a push-readiness verdict. Pick which skills to install.",
   "bin": {
     "ai-code-skills": "bin/cli.js"
   },
