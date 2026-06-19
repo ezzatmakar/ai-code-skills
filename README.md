@@ -1,6 +1,6 @@
 # ai-code-skills
 
-A growing collection of **Agent Skills** for **Claude Code**, **Codex**, and **OpenCode** that review pull requests for **security, performance, and clean code** — and write the results to one evidence-based Markdown report with a merge verdict.
+A growing collection of **Agent Skills** for **Claude Code**, **Codex**, and **OpenCode** that review code for **security, performance, and clean code** — pull requests *or* your local changes before you push — and write the results to one evidence-based Markdown report with a clear verdict.
 
 Each skill is self-contained. You pick which ones to install.
 
@@ -96,9 +96,10 @@ After installing, invoke a skill by name.
 ```text
 $nextjs-pr-review Review PR #123
 $laravel-pr-review Review the current branch, focus on the auth changes.
+$pre-push-review Score my staged changes before I push.
 ```
 
-Both agents may also activate a skill automatically when asked to review a matching PR.
+Both agents may also activate a skill automatically when asked to review a matching PR, or to check local changes before a push.
 
 ### Review modes
 
@@ -110,13 +111,15 @@ Mention a mode to control depth (default is **Standard**):
 
 ### Inline PR comments (opt-in)
 
-Off by default — the report is the deliverable. Ask explicitly to also post findings inline (requires an authenticated `gh`):
+For the PR reviewers (`nextjs-pr-review`, `laravel-pr-review`), off by default — the report is the deliverable. Ask explicitly to also post findings inline (requires an authenticated `gh`):
 
 ```text
 /laravel-pr-review Review PR #123, then post the High/Critical findings as inline comments.
 ```
 
-The skills never approve, request changes, or merge on your behalf unless you say so.
+`pre-push-review` works on local changes with no PR, so it never posts comments — its deliverable is the report plus the Pass/Warn/Fail scorecard and push-readiness recommendation.
+
+The skills never approve, request changes, merge, or push on your behalf unless you say so.
 
 ## Repository layout
 
