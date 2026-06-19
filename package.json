@@ -1,7 +1,7 @@
 {
   "name": "ai-code-skills",
-  "version": "2.0.1",
-  "description": "A collection of Agent Skills for Claude Code and Codex that review pull requests for security, performance, and clean code. Includes Next.js/React and Laravel/PHP reviewers; pick which skills to install.",
+  "version": "2.1.0",
+  "description": "A collection of Agent Skills for Claude Code and Codex that review code for security, performance, and clean code. Includes Next.js/React and Laravel/PHP PR reviewers and a stack-agnostic pre-push local reviewer; pick which skills to install.",
   "bin": {
     "ai-code-skills": "bin/cli.js"
   },
@@ -14,12 +14,14 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "test": "node bin/cli.js list >/dev/null && node bin/cli.js --help >/dev/null && python3 skills/nextjs-pr-review/scripts/validate-report.py --self-test && python3 skills/laravel-pr-review/scripts/validate-report.py --self-test"
+    "test": "node bin/cli.js list >/dev/null && node bin/cli.js --help >/dev/null && python3 skills/nextjs-pr-review/scripts/validate-report.py --self-test && python3 skills/laravel-pr-review/scripts/validate-report.py --self-test && python3 skills/pre-push-review/scripts/validate-report.py --self-test"
   },
   "keywords": [
     "code-review",
     "pull-request",
     "pr-review",
+    "pre-push",
+    "local-review",
     "agent-skill",
     "claude-code",
     "codex",

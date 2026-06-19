@@ -3,6 +3,23 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/) and the project uses semantic versioning.
 
+## [2.1.0]
+
+### Added
+- **`pre-push-review` skill** — a stack-agnostic reviewer for your **local changes
+  before you push**. It auto-detects the language/framework from project manifests,
+  reviews the working-tree diff (default), or staged/unpushed/all-local scopes, and
+  scores **Security**, **Performance**, and **Clean Code** as **PASS/WARN/FAIL** with
+  an overall push-readiness recommendation (Do not push / Fix before push / Push with
+  follow-ups / Ready to push). Writes one Markdown report (`PRE_PUSH_REVIEW.md`) with a
+  Scorecard, evidence-based findings, validation results, and references. Supports
+  Quick/Standard/Deep modes. Ships generic `SECURITY`/`PERFORMANCE`/`CLEAN_CODE`
+  references, a `SCORING` rubric, a report template, a generic multi-language
+  `detect-stack.sh`, a `local-diff.sh` (uncommitted/staged/unpushed/all-local), and a
+  `validate-report.py` that checks the Scorecard and push verdict. No PR, remote, or
+  GitHub CLI required.
+- `npm test` now also runs the `pre-push-review` report validator self-test.
+
 ## [2.0.0]
 
 Repository restructured into **ai-code-skills**, a multi-skill collection. Users

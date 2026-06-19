@@ -10,10 +10,11 @@ Each skill is self-contained. You pick which ones to install.
 |---|---|---|
 | **`nextjs-pr-review`** | Next.js / React PRs (App + Pages Router, Next.js 13–16) | Server/Client boundaries, fetch waterfalls, bundle size, Core Web Vitals, `'use cache'`/PPR/`dynamicIO`/`after()`, async `cookies`/`headers`/`params`, Server Actions & data-boundary security |
 | **`laravel-pr-review`** | Laravel / PHP PRs (Laravel 9–12, PHP 8.0–8.4) | Mass assignment, SQL injection, Policies/Gates, CSRF/XSS in Blade, N+1 queries, missing indexes, queues, caching correctness, PSR-12 / SOLID, migration safety |
+| **`pre-push-review`** | Your **local changes before you push**, any language/framework (auto-detected) | Reviews uncommitted (or staged/unpushed) work and scores **Security / Performance / Clean Code** as **Pass/Warn/Fail** with an overall **push-readiness** recommendation; no PR or remote required |
 
 More skills will be added over time — `list` always shows what's available.
 
-Every review produces **one** Markdown report (`PR_REVIEW.md` by default) with evidence, severity, confidence, rationale, recommendations, verification steps, references, and a merge verdict. Shared features across skills: Quick/Standard/Deep review modes, automatic stack detection, PR-number-aware diffs, and opt-in inline PR comments.
+Every review produces **one** Markdown report with evidence, severity, confidence, rationale, recommendations, verification steps, and references. The PR reviewers write `PR_REVIEW.md` with a merge verdict and support PR-number-aware diffs and opt-in inline PR comments; `pre-push-review` writes `PRE_PUSH_REVIEW.md` from your local diff with a Pass/Warn/Fail scorecard and a push-readiness recommendation. Shared features across skills: Quick/Standard/Deep review modes and automatic stack detection.
 
 ## Install (npm / npx)
 
@@ -87,6 +88,7 @@ After installing, invoke a skill by name.
 ```text
 /nextjs-pr-review Review PR #123 and save the report to docs/reviews/PR-123.md
 /laravel-pr-review Deep review of the current branch against origin/main.
+/pre-push-review Check my local changes before I push.
 ```
 
 ### Codex
@@ -134,11 +136,16 @@ ai-code-skills/
     │   ├── assets/PR_REVIEW_REPORT_TEMPLATE.md
     │   ├── references/{SECURITY,PERFORMANCE,CLEAN_CODE}.md
     │   └── scripts/{pr-diff.sh,detect-stack.sh,validate-report.py}
-    └── laravel-pr-review/
+    ├── laravel-pr-review/
+    │   ├── SKILL.md
+    │   ├── assets/PR_REVIEW_REPORT_TEMPLATE.md
+    │   ├── references/{SECURITY,PERFORMANCE,CLEAN_CODE}.md
+    │   └── scripts/{pr-diff.sh,detect-stack.sh,validate-report.py}
+    └── pre-push-review/
         ├── SKILL.md
-        ├── assets/PR_REVIEW_REPORT_TEMPLATE.md
-        ├── references/{SECURITY,PERFORMANCE,CLEAN_CODE}.md
-        └── scripts/{pr-diff.sh,detect-stack.sh,validate-report.py}
+        ├── assets/PRE_PUSH_REVIEW_REPORT_TEMPLATE.md
+        ├── references/{SECURITY,PERFORMANCE,CLEAN_CODE,SCORING}.md
+        └── scripts/{local-diff.sh,detect-stack.sh,validate-report.py}
 ```
 
 ## Adding a new skill
@@ -150,10 +157,12 @@ ai-code-skills/
 ## Helper scripts (per skill)
 
 ```bash
-skills/<skill>/scripts/pr-diff.sh origin/main      # structured diff
-skills/<skill>/scripts/pr-diff.sh --pr 123          # needs authenticated gh
-skills/<skill>/scripts/detect-stack.sh              # summarize the stack
-python3 skills/<skill>/scripts/validate-report.py PR_REVIEW.md
+skills/<skill>/scripts/pr-diff.sh origin/main       # structured PR/branch diff (PR reviewers)
+skills/<skill>/scripts/pr-diff.sh --pr 123           # needs authenticated gh
+skills/pre-push-review/scripts/local-diff.sh         # local uncommitted diff (pre-push reviewer)
+skills/pre-push-review/scripts/local-diff.sh --staged   # or --unpushed / --all-local
+skills/<skill>/scripts/detect-stack.sh               # summarize the stack
+python3 skills/<skill>/scripts/validate-report.py <report>.md
 ```
 
 ## License
