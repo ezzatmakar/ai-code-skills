@@ -3,6 +3,34 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/) and the project uses semantic versioning.
 
+## [2.2.0]
+
+### Added
+- **`technical-seo-geo-audit` skill** — a developer-focused **technical SEO + GEO
+  (Generative Engine Optimization)** auditor for a **live URL** or a **codebase**. It
+  discovers pages (sitemap/robots, then a link crawl), fetches each page **raw** and diffs
+  it against the **rendered DOM** to catch empty SSR shells and JS-only content (the top
+  defect for both search and AI crawlers), and checks crawlability/indexability,
+  Core Web Vitals, render-blocking, images/fonts, metadata, Open Graph, JSON-LD,
+  semantic HTML, redirects/HTTP, AI-crawler access (GPTBot, ClaudeBot, PerplexityBot,
+  Google-Extended, CCBot, Bytespider), and `llms.txt`. Writes **one per-page Markdown
+  report** (`SEO-GEO-AUDIT.md`) with a separate **SEO score** and **GEO score**, findings
+  grouped by route, and a copy-pasteable **code-level fix** for every finding. Technical
+  only — no content/keyword/editorial advice.
+- **Hybrid architecture**: a dependency-free Node engine (`scripts/crawl.mjs`,
+  `scripts/checks/*`, `scripts/report.mjs`, `scripts/run.mjs`) does the deterministic
+  checks and emits `findings.json` + a baseline report; the skill orchestrates rendered-DOM
+  capture and finalizes the report. Rendered DOM and Core Web Vitals **prefer the
+  chrome-devtools MCP server** and **fall back to optional Playwright + PageSpeed Insights**;
+  raw-HTML, robots/sitemap, metadata, structured-data, and semantic checks run with no
+  dependencies. Missing optional tools reduce coverage with a clear "not measured" warning
+  rather than guessing or crashing.
+- Ships `seo-checks`/`geo-checks`/`severity-rubric` references, a report template, a
+  Next.js/Nuxt/Astro-aware `detect-stack.sh`, fixture-based `selftest.mjs`, and a
+  `validate-report.py` that checks the per-page structure and both scores.
+- `npm test` now also runs the `technical-seo-geo-audit` report validator self-test and the
+  check-engine self-test.
+
 ## [2.1.1]
 
 ### Changed

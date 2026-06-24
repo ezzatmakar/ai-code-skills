@@ -1,6 +1,6 @@
 # ai-code-skills
 
-A growing collection of **Agent Skills** for **Claude Code**, **Codex**, and **OpenCode** that review code for **security, performance, and clean code** — pull requests *or* your local changes before you push — and write the results to one evidence-based Markdown report with a clear verdict.
+A growing collection of **Agent Skills** for **Claude Code**, **Codex**, and **OpenCode**. Review code for **security, performance, and clean code** — pull requests *or* your local changes before you push — and audit a site's **technical SEO + GEO** (Generative Engine Optimization) for search and AI-assistant visibility. Each skill writes its results to one evidence-based Markdown report with a clear verdict.
 
 Each skill is self-contained. You pick which ones to install.
 
@@ -11,10 +11,11 @@ Each skill is self-contained. You pick which ones to install.
 | **`nextjs-pr-review`** | Next.js / React PRs (App + Pages Router, Next.js 13–16) | Server/Client boundaries, fetch waterfalls, bundle size, Core Web Vitals, `'use cache'`/PPR/`dynamicIO`/`after()`, async `cookies`/`headers`/`params`, Server Actions & data-boundary security |
 | **`laravel-pr-review`** | Laravel / PHP PRs (Laravel 9–12, PHP 8.0–8.4) | Mass assignment, SQL injection, Policies/Gates, CSRF/XSS in Blade, N+1 queries, missing indexes, queues, caching correctness, PSR-12 / SOLID, migration safety |
 | **`pre-push-review`** | Your **local changes before you push**, any language/framework (auto-detected) | Reviews uncommitted (or staged/unpushed) work and scores **Security / Performance / Clean Code** as **Pass/Warn/Fail** with an overall **push-readiness** recommendation; no PR or remote required |
+| **`technical-seo-geo-audit`** | A **live URL** or a **codebase** for technical SEO + **GEO** (AI/LLM visibility) | Raw-vs-rendered **SSR diff** (empty-shell detection), Core Web Vitals, structured data, metadata, semantic HTML, redirects, **AI-crawler access** (GPTBot/ClaudeBot/PerplexityBot/…) and `llms.txt`; one **per-page** report with a separate **SEO score** and **GEO score** and a code-level fix per finding |
 
 More skills will be added over time — `list` always shows what's available.
 
-Every review produces **one** Markdown report with evidence, severity, confidence, rationale, recommendations, verification steps, and references. The PR reviewers write `PR_REVIEW.md` with a merge verdict and support PR-number-aware diffs and opt-in inline PR comments; `pre-push-review` writes `PRE_PUSH_REVIEW.md` from your local diff with a Pass/Warn/Fail scorecard and a push-readiness recommendation. Shared features across skills: Quick/Standard/Deep review modes and automatic stack detection.
+Every review produces **one** Markdown report with evidence, severity, confidence, rationale, recommendations, verification steps, and references. The PR reviewers write `PR_REVIEW.md` with a merge verdict and support PR-number-aware diffs and opt-in inline PR comments; `pre-push-review` writes `PRE_PUSH_REVIEW.md` from your local diff with a Pass/Warn/Fail scorecard and a push-readiness recommendation. `technical-seo-geo-audit` writes `SEO-GEO-AUDIT.md` — findings grouped **per page** with a separate **SEO score** and **GEO score** and a copy-pasteable code fix for each; its rendered-DOM and Core Web Vitals checks prefer the chrome-devtools MCP server and fall back to optional Playwright + PageSpeed Insights. Shared features across skills: Quick/Standard/Deep modes and automatic stack detection.
 
 ## Install (npm / npx)
 
@@ -89,6 +90,7 @@ After installing, invoke a skill by name.
 /nextjs-pr-review Review PR #123 and save the report to docs/reviews/PR-123.md
 /laravel-pr-review Deep review of the current branch against origin/main.
 /pre-push-review Check my local changes before I push.
+/technical-seo-geo-audit Audit https://example.com — technical SEO and AI/LLM visibility.
 ```
 
 ### Codex
@@ -97,6 +99,7 @@ After installing, invoke a skill by name.
 $nextjs-pr-review Review PR #123
 $laravel-pr-review Review the current branch, focus on the auth changes.
 $pre-push-review Score my staged changes before I push.
+$technical-seo-geo-audit Audit https://example.com for technical SEO and GEO.
 ```
 
 Both agents may also activate a skill automatically when asked to review a matching PR, or to check local changes before a push.
@@ -144,11 +147,22 @@ ai-code-skills/
     │   ├── assets/PR_REVIEW_REPORT_TEMPLATE.md
     │   ├── references/{SECURITY,PERFORMANCE,CLEAN_CODE}.md
     │   └── scripts/{pr-diff.sh,detect-stack.sh,validate-report.py}
-    └── pre-push-review/
+    ├── pre-push-review/
+    │   ├── SKILL.md
+    │   ├── assets/PRE_PUSH_REVIEW_REPORT_TEMPLATE.md
+    │   ├── references/{SECURITY,PERFORMANCE,CLEAN_CODE,SCORING}.md
+    │   └── scripts/{local-diff.sh,detect-stack.sh,validate-report.py}
+    └── technical-seo-geo-audit/
         ├── SKILL.md
-        ├── assets/PRE_PUSH_REVIEW_REPORT_TEMPLATE.md
-        ├── references/{SECURITY,PERFORMANCE,CLEAN_CODE,SCORING}.md
-        └── scripts/{local-diff.sh,detect-stack.sh,validate-report.py}
+        ├── package.json                 # optional deps: playwright, cheerio
+        ├── assets/SEO_GEO_AUDIT_REPORT_TEMPLATE.md
+        ├── references/{seo-checks,geo-checks,severity-rubric}.md
+        └── scripts/
+            ├── crawl.mjs report.mjs run.mjs static.mjs
+            ├── checks/{crawlability,rendering,performance,metadata,semantics,geo}.mjs
+            ├── lib/{fetch,html,findings,args}.mjs
+            ├── fixtures/ selftest.mjs
+            └── detect-stack.sh validate-report.py
 ```
 
 ## Adding a new skill
