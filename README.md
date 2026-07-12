@@ -1,21 +1,22 @@
 # ai-code-skills
 
-A growing collection of **Agent Skills** for **Claude Code**, **Codex**, and **OpenCode**. Review code for **security, performance, and clean code** — pull requests *or* your local changes before you push — and audit a site's **technical SEO + GEO** (Generative Engine Optimization) for search and AI-assistant visibility. Each skill writes its results to one evidence-based Markdown report with a clear verdict.
+A growing collection of **Agent Skills** for **Claude Code**, **Codex**, and **OpenCode**. Review code for **security, performance, and clean code** — pull requests *or* your local changes before you push — audit a site's **technical SEO + GEO** (Generative Engine Optimization) for search and AI-assistant visibility, and **delegate a task to another model's CLI** (Codex, OpenCode, Claude Code, Cursor, Gemini). Most skills write their results to one evidence-based Markdown report with a clear verdict.
 
 Each skill is self-contained. You pick which ones to install.
 
 ## Skills in this repo
 
-| Skill | Reviews | Highlights |
+| Skill | Operates on | Highlights |
 |---|---|---|
 | **`nextjs-pr-review`** | Next.js / React PRs (App + Pages Router, Next.js 13–16) | Server/Client boundaries, fetch waterfalls, bundle size, Core Web Vitals, `'use cache'`/PPR/`dynamicIO`/`after()`, async `cookies`/`headers`/`params`, Server Actions & data-boundary security |
 | **`laravel-pr-review`** | Laravel / PHP PRs (Laravel 9–12, PHP 8.0–8.4) | Mass assignment, SQL injection, Policies/Gates, CSRF/XSS in Blade, N+1 queries, missing indexes, queues, caching correctness, PSR-12 / SOLID, migration safety |
 | **`pre-push-review`** | Your **local changes before you push**, any language/framework (auto-detected) | Reviews uncommitted (or staged/unpushed) work and scores **Security / Performance / Clean Code** as **Pass/Warn/Fail** with an overall **push-readiness** recommendation; no PR or remote required |
 | **`technical-seo-geo-audit`** | A **live URL** or a **codebase** for technical SEO + **GEO** (AI/LLM visibility) | Raw-vs-rendered **SSR diff** (empty-shell detection), Core Web Vitals, structured data, metadata, semantic HTML, redirects, **AI-crawler access** (GPTBot/ClaudeBot/PerplexityBot/…) and `llms.txt`; one **per-page** report with a separate **SEO score** and **GEO score** and a code-level fix per finding |
+| **`delegate`** | A **task** you hand to a named model CLI (Codex, OpenCode, Claude Code, Cursor, Gemini) | Explicit, **headless** delegation — builds the non-interactive command, previews it (`--dry-run`), runs it (**read-only by default**, `edit` on request), captures the result, and summarizes it back; resolves off-PATH `codex`, degrades when a target isn't installed. **Not a router** — you name the target |
 
 More skills will be added over time — `list` always shows what's available.
 
-Every review produces **one** Markdown report with evidence, severity, confidence, rationale, recommendations, verification steps, and references. The PR reviewers write `PR_REVIEW.md` with a merge verdict and support PR-number-aware diffs and opt-in inline PR comments; `pre-push-review` writes `PRE_PUSH_REVIEW.md` from your local diff with a Pass/Warn/Fail scorecard and a push-readiness recommendation. `technical-seo-geo-audit` writes `SEO-GEO-AUDIT.md` — findings grouped **per page** with a separate **SEO score** and **GEO score** and a copy-pasteable code fix for each; its rendered-DOM and Core Web Vitals checks prefer the chrome-devtools MCP server and fall back to optional Playwright + PageSpeed Insights. Shared features across skills: Quick/Standard/Deep modes and automatic stack detection.
+Every review produces **one** Markdown report with evidence, severity, confidence, rationale, recommendations, verification steps, and references. The PR reviewers write `PR_REVIEW.md` with a merge verdict and support PR-number-aware diffs and opt-in inline PR comments; `pre-push-review` writes `PRE_PUSH_REVIEW.md` from your local diff with a Pass/Warn/Fail scorecard and a push-readiness recommendation. `technical-seo-geo-audit` writes `SEO-GEO-AUDIT.md` — findings grouped **per page** with a separate **SEO score** and **GEO score** and a copy-pasteable code fix for each; its rendered-DOM and Core Web Vitals checks prefer the chrome-devtools MCP server and fall back to optional Playwright + PageSpeed Insights. Shared features across the review skills: Quick/Standard/Deep modes and automatic stack detection. `delegate` is the exception — instead of a report, it hands a task to another model's CLI headlessly and summarizes the answer, always confirming the exact command before it spends the target's credits.
 
 ## Install (npm / npx)
 
@@ -91,6 +92,7 @@ After installing, invoke a skill by name.
 /laravel-pr-review Deep review of the current branch against origin/main.
 /pre-push-review Check my local changes before I push.
 /technical-seo-geo-audit Audit https://example.com — technical SEO and AI/LLM visibility.
+/delegate --to codex Refactor src/auth.ts and add tests. (edit mode; confirm first)
 ```
 
 ### Codex
@@ -100,6 +102,7 @@ $nextjs-pr-review Review PR #123
 $laravel-pr-review Review the current branch, focus on the auth changes.
 $pre-push-review Score my staged changes before I push.
 $technical-seo-geo-audit Audit https://example.com for technical SEO and GEO.
+$delegate --to opencode Explain what this module does. (read-only, the default)
 ```
 
 Both agents may also activate a skill automatically when asked to review a matching PR, or to check local changes before a push.
@@ -152,17 +155,21 @@ ai-code-skills/
     │   ├── assets/PRE_PUSH_REVIEW_REPORT_TEMPLATE.md
     │   ├── references/{SECURITY,PERFORMANCE,CLEAN_CODE,SCORING}.md
     │   └── scripts/{local-diff.sh,detect-stack.sh,validate-report.py}
-    └── technical-seo-geo-audit/
+    ├── technical-seo-geo-audit/
+    │   ├── SKILL.md
+    │   ├── package.json                 # optional deps: playwright, cheerio
+    │   ├── assets/SEO_GEO_AUDIT_REPORT_TEMPLATE.md
+    │   ├── references/{seo-checks,geo-checks,severity-rubric}.md
+    │   └── scripts/
+    │       ├── crawl.mjs report.mjs run.mjs static.mjs
+    │       ├── checks/{crawlability,rendering,performance,metadata,semantics,geo}.mjs
+    │       ├── lib/{fetch,html,findings,args}.mjs
+    │       ├── fixtures/ selftest.mjs
+    │       └── detect-stack.sh validate-report.py
+    └── delegate/
         ├── SKILL.md
-        ├── package.json                 # optional deps: playwright, cheerio
-        ├── assets/SEO_GEO_AUDIT_REPORT_TEMPLATE.md
-        ├── references/{seo-checks,geo-checks,severity-rubric}.md
-        └── scripts/
-            ├── crawl.mjs report.mjs run.mjs static.mjs
-            ├── checks/{crawlability,rendering,performance,metadata,semantics,geo}.mjs
-            ├── lib/{fetch,html,findings,args}.mjs
-            ├── fixtures/ selftest.mjs
-            └── detect-stack.sh validate-report.py
+        ├── references/TARGETS.md         # per-tool adapter matrix + gotchas
+        └── scripts/{detect-clis.sh,delegate.sh}
 ```
 
 ## Adding a new skill
@@ -180,6 +187,10 @@ skills/pre-push-review/scripts/local-diff.sh         # local uncommitted diff (p
 skills/pre-push-review/scripts/local-diff.sh --staged   # or --unpushed / --all-local
 skills/<skill>/scripts/detect-stack.sh               # summarize the stack
 python3 skills/<skill>/scripts/validate-report.py <report>.md
+
+skills/delegate/scripts/detect-clis.sh               # which model CLIs are installed + how to call each
+skills/delegate/scripts/delegate.sh --to opencode --dry-run "hi"   # preview the resolved command
+skills/delegate/scripts/delegate.sh --to codex --mode edit "..."   # run it (read-only is the default)
 ```
 
 ## License

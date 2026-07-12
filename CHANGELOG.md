@@ -3,6 +3,26 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/) and the project uses semantic versioning.
 
+## [2.3.0]
+
+### Added
+- **`delegate` skill** — an explicit dispatcher that hands a single task to a **named**
+  model CLI (**Codex, OpenCode, Claude Code, Cursor, Gemini**), runs it **headlessly**, and
+  captures the result. It is not a router: you name the target and it never substitutes a
+  model. Defaults to **read-only** (`--mode edit` opts into changes) and always previews the
+  exact command (`--dry-run`) so the agent can confirm before spending the target's credits.
+  Honors `--model`, `--timeout`, `--json`, `--cwd`, stdin/heredoc prompts, and `--list-models`.
+- **Two helper scripts**: `scripts/detect-clis.sh` reports which targets are installed, their
+  versions, and resolved binary paths (always exits 0); `scripts/delegate.sh` builds and runs
+  the per-target headless command. Binary resolution is `$DELEGATE_<TOOL>_BIN` → `PATH` →
+  known locations, so it finds **codex inside ChatGPT.app** when it is off-`PATH`, and stops
+  with an install hint (never a silent fallback) when a target such as **gemini** is absent.
+- **Portable by design**: enforces `--timeout` via `timeout`/`gtimeout` when present or a
+  built-in watchdog otherwise (neither ships on macOS by default), keeps `jq` optional, and
+  maps read-only vs edit to each tool's own safe flags — never a dangerous bypass flag.
+- Ships `references/TARGETS.md` (per-tool adapter matrix, the codex off-PATH and
+  gemini-absent gotchas, cost/self-delegation notes) and adds delegate smoke checks to `npm test`.
+
 ## [2.2.0]
 
 ### Added

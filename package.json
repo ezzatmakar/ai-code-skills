@@ -1,7 +1,7 @@
 {
   "name": "ai-code-skills",
-  "version": "2.2.0",
-  "description": "Agent Skills for Claude Code, Codex, and OpenCode that review code for security, performance, and clean code, then write one evidence-based Markdown report. Includes Next.js/React and Laravel/PHP pull-request reviewers, a stack-agnostic pre-push reviewer that scores your local changes (Security, Performance, Clean Code) as Pass/Warn/Fail with a push-readiness verdict, and a developer-focused technical SEO + GEO (Generative Engine Optimization) auditor that produces a per-page README report with code-level fixes. Pick which skills to install.",
+  "version": "2.3.0",
+  "description": "Agent Skills for Claude Code, Codex, and OpenCode that review code for security, performance, and clean code, then write one evidence-based Markdown report. Includes Next.js/React and Laravel/PHP pull-request reviewers, a stack-agnostic pre-push reviewer that scores your local changes (Security, Performance, Clean Code) as Pass/Warn/Fail with a push-readiness verdict, a developer-focused technical SEO + GEO (Generative Engine Optimization) auditor that produces a per-page README report with code-level fixes, and a delegate dispatcher that hands a task to another model's CLI (Codex, OpenCode, Claude Code, Cursor, Gemini) headlessly and summarizes the result. Pick which skills to install.",
   "bin": {
     "ai-code-skills": "bin/cli.js"
   },
@@ -14,7 +14,7 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "test": "node bin/cli.js list >/dev/null && node bin/cli.js --help >/dev/null && python3 skills/nextjs-pr-review/scripts/validate-report.py --self-test && python3 skills/laravel-pr-review/scripts/validate-report.py --self-test && python3 skills/pre-push-review/scripts/validate-report.py --self-test && python3 skills/technical-seo-geo-audit/scripts/validate-report.py --self-test && node skills/technical-seo-geo-audit/scripts/selftest.mjs"
+    "test": "node bin/cli.js list >/dev/null && node bin/cli.js --help >/dev/null && python3 skills/nextjs-pr-review/scripts/validate-report.py --self-test && python3 skills/laravel-pr-review/scripts/validate-report.py --self-test && python3 skills/pre-push-review/scripts/validate-report.py --self-test && python3 skills/technical-seo-geo-audit/scripts/validate-report.py --self-test && node skills/technical-seo-geo-audit/scripts/selftest.mjs && bash -n skills/delegate/scripts/detect-clis.sh && bash -n skills/delegate/scripts/delegate.sh && bash skills/delegate/scripts/delegate.sh --help >/dev/null && bash skills/delegate/scripts/detect-clis.sh >/dev/null"
   },
   "keywords": [
     "code-review",
@@ -38,7 +38,13 @@
     "generative-engine-optimization",
     "core-web-vitals",
     "llms-txt",
-    "structured-data"
+    "structured-data",
+    "delegate",
+    "orchestration",
+    "multi-model",
+    "opencode",
+    "cursor",
+    "gemini"
   ],
   "author": "Ezzat Malak",
   "license": "MIT",
