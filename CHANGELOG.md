@@ -3,6 +3,18 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/) and the project uses semantic versioning.
 
+## [2.3.1]
+
+### Added
+- README: a **"Delegate — target to CLI"** quick-reference table mapping each target to its
+  one-line headless command. Produced by **dogfooding the `delegate` skill** — the edit was
+  delegated to OpenCode in edit mode.
+
+### Changed
+- `delegate` SKILL (Phase 4): note to run long delegations in the **background** and bound them
+  with `delegate.sh --timeout`, so a caller's short foreground shell timeout can't kill a
+  multi-minute delegate mid-task.
+
 ## [2.3.0]
 
 ### Added

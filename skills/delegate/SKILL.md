@@ -90,6 +90,11 @@ After confirmation, re-run the same command **without** `--dry-run`. Capture std
 `delegate.sh` returns the target's own exit code (or `124` on timeout, `3` if the target vanished). On
 failure or timeout, report the error and any partial output — do not silently retry.
 
+A real delegation often runs for **minutes**. If you are invoking `delegate.sh` from a host whose shell
+has a short foreground timeout (e.g. an agent Bash tool that caps at ~120s), run it in the **background**
+and poll for completion — a foreground shell will otherwise kill the delegate mid-task. Bound the run
+with `delegate.sh`'s own `--timeout` rather than relying on the caller's shell limit.
+
 ## Phase 5: Summarize back
 
 Present a concise, host-neutral summary: which target and model ran, the mode, the exit status and

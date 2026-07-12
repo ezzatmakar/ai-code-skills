@@ -193,6 +193,16 @@ skills/delegate/scripts/delegate.sh --to opencode --dry-run "hi"   # preview the
 skills/delegate/scripts/delegate.sh --to codex --mode edit "..."   # run it (read-only is the default)
 ```
 
+### Delegate — target to CLI
+
+| Target | Headless command |
+|---|---|
+| codex | `codex exec` |
+| opencode | `opencode run` |
+| claude | `claude -p` |
+| cursor | `cursor-agent -p` |
+| gemini | `gemini -p` |
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
