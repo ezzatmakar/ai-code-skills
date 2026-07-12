@@ -13,6 +13,7 @@ names were verified against each tool's live `--help`.
 | **claude** | `claude -p` | `--model MODEL` | `--output-format json` (final = `.result`) | `--permission-mode plan` | `--permission-mode acceptEdits` | positional arg |
 | **cursor** | `cursor-agent -p` | `--model MODEL` | `--output-format json` (final = `.result`) | `--mode ask` | `-f` / `--force` | positional arg |
 | **gemini** | `gemini -p` | `-m MODEL` | (text only) | default | (not wired) | value of `-p` |
+| **aider** | `aider --message` | `--model MODEL` | (text only) | `--dry-run` | `--no-auto-commits` | value of `--message` |
 
 `--mode read-only` (default) maps to each tool's non-writing mode; `--mode edit` maps to its
 **least-dangerous** auto-approving mode. `delegate.sh` never emits a tool's nuclear bypass flag
@@ -48,6 +49,26 @@ outside a git repo, and `-C <cwd>` to set its working directory.
 and an install hint** — it never silently substitutes another model. Install with
 `npm i -g @google/gemini-cli`, or pick an installed target from `detect-clis.sh`.
 
+### aider commits to git by default
+
+`aider` is **edit-first**: unlike the others it will apply changes and, by default, **auto-commit them to
+git**. `delegate.sh` maps the modes to keep it consistent with every other target:
+
+- **read-only** → `--dry-run` — aider reasons about the change but writes nothing.
+- **edit** → `--no-auto-commits` — aider edits the **working tree** but does not create commits, so you
+  review and commit yourself (same as codex/claude/cursor/opencode edit mode).
+
+Both modes add `--yes-always` (non-interactive, no confirmation prompts) and `--no-pretty` (cleaner
+captured output). aider has **no JSON output** (`--json` returns text). It needs a model + API key
+configured for its provider (e.g. `OPENAI_API_KEY`/`ANTHROPIC_API_KEY` or `~/.aider.conf.yml`); a missing
+one surfaces as aider's own error, which `delegate.sh` passes through. The prompt is passed as the value
+of `--message`.
+
+To keep a delegation non-invasive, `delegate.sh` runs aider with `--no-gitignore` (so it never edits the
+repo's tracked `.gitignore`), redirects `--chat-history-file`/`--input-history-file` to a temp dir, and
+removes the `.aider.tags.cache.*` repo-map cache **only if our run created it** (a pre-existing aider
+cache is left untouched). A read-only aider delegation therefore leaves the working tree clean.
+
 ## Output capture
 
 Prefer **text** output; only pass `--json` when you actually want structured events.
@@ -80,6 +101,7 @@ Partial output printed before the deadline is preserved.
 - **claude** → fixed set (opus / sonnet / haiku and dated aliases)
 - **codex** → no list command; choose with `-m` or see `~/.codex/config.toml`
 - **gemini** → `gemini --list-models` when available
+- **aider** → `aider --list-models ""` (lists every known model; pass a substring to filter)
 
 ## Cost, auth, and self-delegation
 

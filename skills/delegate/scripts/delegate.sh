@@ -61,8 +61,8 @@ done
 
 [ -n "$TARGET" ] || die "missing --to <target>"
 case "$TARGET" in
-  codex|opencode|claude|cursor|gemini) ;;
-  *) die "unknown target '$TARGET' (codex|opencode|claude|cursor|gemini)" ;;
+  codex|opencode|claude|cursor|gemini|aider) ;;
+  *) die "unknown target '$TARGET' (codex|opencode|claude|cursor|gemini|aider)" ;;
 esac
 
 # --- Resolve the target binary ----------------------------------------------
@@ -86,6 +86,7 @@ resolve_bin() {
     opencode) command -v opencode 2>/dev/null ;;
     claude)   command -v claude 2>/dev/null ;;
     gemini)   command -v gemini 2>/dev/null ;;
+    aider)    command -v aider 2>/dev/null ;;
   esac
 }
 
@@ -103,6 +104,7 @@ if [ "$LIST_MODELS" -eq 1 ]; then
     gemini)   "$BIN" --list-models 2>/dev/null || printf 'gemini: check `gemini --help` for model options.\n' ;;
     claude)   printf 'claude models are fixed: opus, sonnet, haiku (and dated aliases). Pass one with --model.\n' ;;
     codex)    printf 'codex has no list command. Choose a model with -m, or see ~/.codex/config.toml.\n' ;;
+    aider)    "$BIN" --list-models "" ;;
   esac
   exit 0
 fi
@@ -121,6 +123,9 @@ fi
 # --- Build the per-target command as an array (no eval, no shell-escaping) --
 cmd=()
 LAST_MSG_FILE=""   # codex writes its final answer here in text mode
+AIDER_TMP=""       # aider history redirected here to keep the repo clean
+AIDER_CWD=""       # where aider ran, for post-run repo-map cache cleanup
+AIDER_CACHE_PREEXISTED=0
 case "$TARGET" in
   codex)
     sandbox="read-only"; [ "$MODE" = "edit" ] && sandbox="workspace-write"
@@ -161,6 +166,21 @@ case "$TARGET" in
     cmd=("$BIN" -p "$PROMPT")
     [ -n "$MODEL" ] && cmd+=(-m "$MODEL")
     ;;
+  aider)
+    # aider is edit-first and auto-commits by default. read-only -> --dry-run (no
+    # file changes); edit -> --no-auto-commits (apply to the working tree but do not
+    # commit, matching the other targets). --yes-always keeps it non-interactive.
+    # --no-gitignore stops aider mutating the repo's .gitignore, and chat/input
+    # history go to a temp dir so a delegation leaves no .aider* files behind.
+    [ "$JSON" -eq 1 ] && printf 'Note: aider has no JSON output mode; returning text.\n' >&2
+    AIDER_TMP="$(mktemp -d -t delegate-aider 2>/dev/null || mktemp -d)"
+    AIDER_CWD="$CWD"
+    ls "$CWD"/.aider.tags.cache.* >/dev/null 2>&1 && AIDER_CACHE_PREEXISTED=1
+    cmd=("$BIN" --message "$PROMPT" --yes-always --no-pretty --no-gitignore
+         --chat-history-file "$AIDER_TMP/chat.md" --input-history-file "$AIDER_TMP/input.txt")
+    [ -n "$MODEL" ] && cmd+=(--model "$MODEL")
+    if [ "$MODE" = "edit" ]; then cmd+=(--no-auto-commits); else cmd+=(--dry-run); fi
+    ;;
 esac
 
 # --- Resolve an optional timeout wrapper ------------------------------------
@@ -196,6 +216,7 @@ if [ "$DRYRUN" -eq 1 ]; then
   for a in "${cmd[@]}"; do printf '%q ' "$a"; done
   printf '\n'
   [ -n "$LAST_MSG_FILE" ] && rm -f "$LAST_MSG_FILE"
+  [ -n "$AIDER_TMP" ] && rm -rf "$AIDER_TMP"
   exit 0
 fi
 
@@ -226,5 +247,10 @@ if [ -n "$LAST_MSG_FILE" ] && [ -s "$LAST_MSG_FILE" ]; then
   cat "$LAST_MSG_FILE"
 fi
 [ -n "$LAST_MSG_FILE" ] && rm -f "$LAST_MSG_FILE"
+[ -n "$AIDER_TMP" ] && rm -rf "$AIDER_TMP"
+# Remove the repo-map cache only if our aider run created it (never a pre-existing one).
+if [ "$TARGET" = "aider" ] && [ "$AIDER_CACHE_PREEXISTED" = "0" ] && [ -n "$AIDER_CWD" ]; then
+  rm -rf "$AIDER_CWD"/.aider.tags.cache.* 2>/dev/null || true
+fi
 
 exit "$rc"

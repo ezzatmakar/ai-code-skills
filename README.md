@@ -1,6 +1,6 @@
 # ai-code-skills
 
-A growing collection of **Agent Skills** for **Claude Code**, **Codex**, and **OpenCode**. Review code for **security, performance, and clean code** — pull requests *or* your local changes before you push — audit a site's **technical SEO + GEO** (Generative Engine Optimization) for search and AI-assistant visibility, and **delegate a task to another model's CLI** (Codex, OpenCode, Claude Code, Cursor, Gemini). Most skills write their results to one evidence-based Markdown report with a clear verdict.
+A growing collection of **Agent Skills** for **Claude Code**, **Codex**, and **OpenCode**. Review code for **security, performance, and clean code** — pull requests *or* your local changes before you push — audit a site's **technical SEO + GEO** (Generative Engine Optimization) for search and AI-assistant visibility, and **delegate a task to another model's CLI** (Codex, OpenCode, Claude Code, Cursor, Gemini, Aider). Most skills write their results to one evidence-based Markdown report with a clear verdict.
 
 Each skill is self-contained. You pick which ones to install.
 
@@ -12,7 +12,7 @@ Each skill is self-contained. You pick which ones to install.
 | **`laravel-pr-review`** | Laravel / PHP PRs (Laravel 9–12, PHP 8.0–8.4) | Mass assignment, SQL injection, Policies/Gates, CSRF/XSS in Blade, N+1 queries, missing indexes, queues, caching correctness, PSR-12 / SOLID, migration safety |
 | **`pre-push-review`** | Your **local changes before you push**, any language/framework (auto-detected) | Reviews uncommitted (or staged/unpushed) work and scores **Security / Performance / Clean Code** as **Pass/Warn/Fail** with an overall **push-readiness** recommendation; no PR or remote required |
 | **`technical-seo-geo-audit`** | A **live URL** or a **codebase** for technical SEO + **GEO** (AI/LLM visibility) | Raw-vs-rendered **SSR diff** (empty-shell detection), Core Web Vitals, structured data, metadata, semantic HTML, redirects, **AI-crawler access** (GPTBot/ClaudeBot/PerplexityBot/…) and `llms.txt`; one **per-page** report with a separate **SEO score** and **GEO score** and a code-level fix per finding |
-| **`delegate`** | A **task** you hand to a named model CLI (Codex, OpenCode, Claude Code, Cursor, Gemini) | Explicit, **headless** delegation — builds the non-interactive command, previews it (`--dry-run`), runs it (**read-only by default**, `edit` on request), captures the result, and summarizes it back; resolves off-PATH `codex`, degrades when a target isn't installed. **Not a router** — you name the target |
+| **`delegate`** | A **task** you hand to a named model CLI (Codex, OpenCode, Claude Code, Cursor, Gemini, Aider) | Explicit, **headless** delegation — builds the non-interactive command, previews it (`--dry-run`), runs it (**read-only by default**, `edit` on request), captures the result, and summarizes it back; resolves off-PATH `codex`, degrades when a target isn't installed. **Not a router** — you name the target |
 
 More skills will be added over time — `list` always shows what's available.
 
@@ -202,6 +202,7 @@ skills/delegate/scripts/delegate.sh --to codex --mode edit "..."   # run it (rea
 | claude | `claude -p` |
 | cursor | `cursor-agent -p` |
 | gemini | `gemini -p` |
+| aider | `aider --message` |
 
 ## License
 

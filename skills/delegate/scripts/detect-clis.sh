@@ -55,6 +55,7 @@ resolve_bin() {
     opencode) command -v opencode 2>/dev/null ;;
     claude)   command -v claude 2>/dev/null ;;
     gemini)   command -v gemini 2>/dev/null ;;
+    aider)    command -v aider 2>/dev/null ;;
     *) return 1 ;;
   esac
 }
@@ -72,6 +73,7 @@ invocation_of() {
     claude)   printf 'claude -p [--model MODEL] [--permission-mode plan|acceptEdits] [--output-format json] "PROMPT"' ;;
     cursor)   printf 'cursor-agent -p [--model MODEL] [--mode ask | -f] [--output-format json] "PROMPT"' ;;
     gemini)   printf 'gemini -p "PROMPT" [-m MODEL]' ;;
+    aider)    printf 'aider --message "PROMPT" --yes-always [--model M] [--dry-run(read-only) | --no-auto-commits(edit)]' ;;
   esac
 }
 
@@ -82,10 +84,11 @@ install_hint() {
     claude)   printf 'Install Claude Code: https://claude.com/claude-code.' ;;
     cursor)   printf 'Install the Cursor agent CLI: https://cursor.com (cursor-agent).' ;;
     gemini)   printf 'Install the Gemini CLI: npm i -g @google/gemini-cli.' ;;
+    aider)    printf 'Install aider: python -m pip install aider-chat (or pipx install aider-chat).' ;;
   esac
 }
 
-ALL_TARGETS="codex opencode claude cursor gemini"
+ALL_TARGETS="codex opencode claude cursor gemini aider"
 targets="$ALL_TARGETS"
 if [ $# -gt 0 ]; then
   case "$1" in

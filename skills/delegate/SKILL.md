@@ -1,6 +1,6 @@
 ---
 name: delegate
-description: Hand a task to a different model's CLI — Codex, OpenCode, Claude Code, Cursor, or Gemini — headlessly, then capture and summarize its answer. Use when you explicitly name a target — "delegate this to codex", "ask opencode to explain this file", "run this with cursor", "get a second opinion from claude" — to build a non-interactive invocation, confirm it, execute it (read-only by default; edit mode only on request), and report the result. Honors model, mode, timeout, and JSON output. Not a router: you must name the target; it never picks or substitutes a model for you.
+description: Hand a task to a different model's CLI — Codex, OpenCode, Claude Code, Cursor, Gemini, or Aider — headlessly, then capture and summarize its answer. Use when you explicitly name a target — "delegate this to codex", "ask opencode to explain this file", "run this with cursor", "get a second opinion from claude", "have aider make this change" — to build a non-interactive invocation, confirm it, execute it (read-only by default; edit mode only on request), and report the result. Honors model, mode, timeout, and JSON output. Not a router: you must name the target; it never picks or substitutes a model for you.
 license: MIT
 compatibility: Model-agnostic; runs from Claude Code, Codex, or OpenCode. Plain bash — resolves targets by $DELEGATE_<TOOL>_BIN, PATH, or known install paths (codex is often off-PATH inside ChatGPT.app; gemini may be absent). Degrades gracefully when a target or `timeout`/`gtimeout`/`jq` is missing. Designed for Codex and Claude Code using the Agent Skills open standard.
 metadata:
@@ -10,8 +10,8 @@ metadata:
 
 # Delegate to another model's CLI
 
-Delegate a single task to a **named** model CLI — Codex, OpenCode, Claude Code, Cursor, or Gemini — run
-it **headlessly**, and bring the result back. This skill is an **explicit dispatcher**: the user names
+Delegate a single task to a **named** model CLI — Codex, OpenCode, Claude Code, Cursor, Gemini, or
+Aider — run it **headlessly**, and bring the result back. This skill is an **explicit dispatcher**: the user names
 the target; it never routes, guesses, or substitutes a model. It **defaults to read-only**, and it
 **always confirms the exact command before executing**, because delegating spends the target's credits
 and — in edit mode — can modify files.
@@ -45,8 +45,8 @@ output capture, the codex off-PATH gotcha, gemini-absent handling, and cost note
 
 Determine these before doing anything, then echo them back:
 
-1. **Target** (required, explicit): one of `codex`, `opencode`, `claude`, `cursor`, `gemini`. If missing,
-   ask — do not guess.
+1. **Target** (required, explicit): one of `codex`, `opencode`, `claude`, `cursor`, `gemini`, `aider`. If
+   missing, ask — do not guess.
 2. **Prompt**: the task to delegate. Prefer passing it to `delegate.sh` via `--stdin` and a quoted
    heredoc (quote-proof for multi-line prompts with backticks, quotes, or `$`).
 3. **Model** (`--model`, optional): pass through to the target. Use `delegate.sh --to <target>

@@ -3,6 +3,19 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/) and the project uses semantic versioning.
 
+## [2.4.0]
+
+### Added
+- **`delegate`: `aider` as a sixth target.** Delegate to Aider headlessly via
+  `aider --message … --yes-always`. Read-only maps to `--dry-run` (no file changes); edit maps
+  to `--no-auto-commits` (applies to the working tree without committing, matching the other
+  targets). `--list-models` runs `aider --list-models ""`.
+- Aider runs are **non-invasive**: `--no-gitignore` (never edits the repo's tracked `.gitignore`),
+  chat/input history redirected to a temp dir, and the `.aider.tags.cache.*` repo-map cache removed
+  **only when our run created it** — so a read-only aider delegation leaves the working tree clean.
+- `detect-clis.sh` now probes all six targets; `references/TARGETS.md` documents aider's flags,
+  the auto-commit gotcha, and the footprint handling.
+
 ## [2.3.1]
 
 ### Added
