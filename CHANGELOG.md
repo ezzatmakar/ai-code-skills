@@ -3,6 +3,36 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/) and the project uses semantic versioning.
 
+## [2.5.0]
+
+### Added
+- **`comment-cleanup` skill** — sweeps a codebase and **rewrites its comments in place** to one
+  standard: **short** (1-line default, 3-line inline cap), **sorted** (canonical docblock order —
+  summary → `@param` in signature order → `@return` → `@throws` → `@deprecated` → `@see`),
+  **placed** (docblock attached to its declaration with no blank line between; no detached or
+  trailing essays), and **marked** (`TODO(#1234): <action>`). Deletes comments that restate the
+  code, banner/divider art, commented-out blocks, changelog-in-comments, and assistant filler;
+  adds a docblock only to **non-obvious public API**, never to trivial getters.
+- **Edits comments only — never executable code.** When a comment is bad because the *code* is
+  unclear, the skill escalates instead of "fixing" it. It refuses to start on a dirty working tree,
+  gates every run behind a preview the user approves, and works in revertible batches, so the whole
+  sweep is one reviewable `git diff`.
+- **`scripts/scan-comments.py`** — a dependency-free (stdlib only) comment inventory that is
+  string- and regex-literal-aware, so `"// not a comment"` and `/https:\/\//` are never mistaken
+  for comments. Uses `tokenize` for Python and a per-language state machine elsewhere (C-style,
+  hash, SQL, HTML, CSS, Lua, JSX, Vue/Svelte). Flags 11 rule IDs — `DUP`, `LEN`, `ORD`, `POS`,
+  `TODO`, `DEAD`, `BANNER`, `CHANGELOG`, `GENERATED`, `EMPTY`, `SECRET` — each with a disposition,
+  as a table or `--json`. Always exits 0: it reports, it never gates.
+- **Protected by construction**: pragmas and tool directives (`@ts-ignore`, `eslint-disable`,
+  `# noqa`, `//nolint`, `//go:build`, `# frozen_string_literal`, …) are treated as **code** and are
+  exempt from every rule, as are licence headers and file-purpose headers. Suspected credentials are
+  reported **redacted** — the value is never echoed — with a note that deletion does not remediate.
+- Ships `references/{COMMENT_STANDARD,LANGUAGE_CONVENTIONS,ANTIPATTERNS}.md`, citing Google
+  eng-practices, Ousterhout's *A Philosophy of Software Design*, the Stack Overflow comment rules,
+  Google's `TODO` grammar, Go doc comments, PEP 257, TSDoc, php-fig PHPDoc, Javadoc, and Rust RFC
+  0505/1574. Adds 29 scanner fixtures to `npm test`, including false-positive guards for prose in
+  docblocks, shell parameter docs, value enumerations, and strings that look like comments.
+
 ## [2.4.0]
 
 ### Added
