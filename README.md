@@ -1,6 +1,6 @@
 # ai-code-skills
 
-A growing collection of **Agent Skills** for **Claude Code**, **Codex**, and **OpenCode**. Review code for **security, performance, and clean code** — pull requests *or* your local changes before you push — **clean up your code comments** to one short, sorted standard, audit a site's **technical SEO + GEO** (Generative Engine Optimization) for search and AI-assistant visibility, and **delegate a task to another model's CLI** (Codex, OpenCode, Claude Code, Cursor, Gemini, Aider). Most skills write their results to one evidence-based Markdown report with a clear verdict.
+A growing collection of **Agent Skills** for **Claude Code**, **Codex**, and **OpenCode**. Review code for **security, performance, and clean code** — pull requests *or* your local changes before you push — **clean up your code comments** to one short, sorted standard, audit a site's **technical SEO + GEO** (Generative Engine Optimization) for search and AI-assistant visibility, audit **web performance and RUM** against real-user field data (Core Web Vitals p75 from CrUX/PageSpeed Insights), and **delegate a task to another model's CLI** (Codex, OpenCode, Claude Code, Cursor, Gemini, Aider). Most skills write their results to one evidence-based Markdown report with a clear verdict.
 
 Each skill is self-contained. You pick which ones to install.
 
@@ -12,12 +12,13 @@ Each skill is self-contained. You pick which ones to install.
 | **`laravel-pr-review`** | Laravel / PHP PRs (Laravel 9–12, PHP 8.0–8.4) | Mass assignment, SQL injection, Policies/Gates, CSRF/XSS in Blade, N+1 queries, missing indexes, queues, caching correctness, PSR-12 / SOLID, migration safety |
 | **`pre-push-review`** | Your **local changes before you push**, any language/framework (auto-detected) | Reviews uncommitted (or staged/unpushed) work and scores **Security / Performance / Clean Code** as **Pass/Warn/Fail** with an overall **push-readiness** recommendation; no PR or remote required |
 | **`technical-seo-geo-audit`** | A **live URL** or a **codebase** for technical SEO + **GEO** (AI/LLM visibility) | Raw-vs-rendered **SSR diff** (empty-shell detection), Core Web Vitals, structured data, metadata, semantic HTML, redirects, **AI-crawler access** (GPTBot/ClaudeBot/PerplexityBot/…) and `llms.txt`; one **per-page** report with a separate **SEO score** and **GEO score** and a code-level fix per finding |
+| **`web-perf-audit`** | A **live URL** or a **codebase**, for web performance + **RUM** (field data) | Measures **before** it recommends: Core Web Vitals **p75 from real field data** (CrUX + PageSpeed Insights), Lighthouse lab analysis, response headers and optional chrome-devtools MCP traces for **INP**, route transitions and memory. Covers LCP/INP/CLS/TTFB root causes, JS bundles & execution, network waterfalls, API latency & N+1, images, fonts, third-party cost, caching, and mobile-vs-desktop. Writes **`PERFORMANCE_AUDIT.md`** (every finding ranked P0–P3) plus **`PERFORMANCE_PLAN.md`** (six delivery phases), and ships **budget** and **per-deploy regression** gates. Never invents a number — anything it could not measure is labelled, never passed |
 | **`comment-cleanup`** | Your **code comments**, repo-wide or in the paths you name, any language | Rewrites comments **in place** to one standard — **short** (1-line default, 3-line cap), **sorted** (canonical `@param` → `@return` → `@throws` order), **placed** (attached to the declaration, no detached or trailing essays), **marked** (`TODO(#123):`). Deletes comments that restate the code, banner art, commented-out blocks, changelog-in-comments and assistant filler; adds a docblock only to non-obvious public API. **Comments only — never executable code**, and always previews the plan first |
 | **`delegate`** | A **task** you hand to a named model CLI (Codex, OpenCode, Claude Code, Cursor, Gemini, Aider) | Explicit, **headless** delegation — builds the non-interactive command, previews it (`--dry-run`), runs it (**read-only by default**, `edit` on request), captures the result, and summarizes it back; resolves off-PATH `codex`, degrades when a target isn't installed. **Not a router** — you name the target |
 
 More skills will be added over time — `list` always shows what's available.
 
-Every review produces **one** Markdown report with evidence, severity, confidence, rationale, recommendations, verification steps, and references. The PR reviewers write `PR_REVIEW.md` with a merge verdict and support PR-number-aware diffs and opt-in inline PR comments; `pre-push-review` writes `PRE_PUSH_REVIEW.md` from your local diff with a Pass/Warn/Fail scorecard and a push-readiness recommendation. `technical-seo-geo-audit` writes `SEO-GEO-AUDIT.md` — findings grouped **per page** with a separate **SEO score** and **GEO score** and a copy-pasteable code fix for each; its rendered-DOM and Core Web Vitals checks prefer the chrome-devtools MCP server and fall back to optional Playwright + PageSpeed Insights. Shared features across the review skills: Quick/Standard/Deep modes and automatic stack detection. Two skills are the exception — instead of a report, `delegate` hands a task to another model's CLI headlessly and summarizes the answer, always confirming the exact command before it spends the target's credits, and `comment-cleanup` **edits your comments in place**, so its deliverable is a reviewable `git diff` rather than a document. Both gate on explicit confirmation before they act.
+Most reviews produce **one** Markdown report with evidence, severity, confidence, rationale, recommendations, verification steps, and references. The PR reviewers write `PR_REVIEW.md` with a merge verdict and support PR-number-aware diffs and opt-in inline PR comments; `pre-push-review` writes `PRE_PUSH_REVIEW.md` from your local diff with a Pass/Warn/Fail scorecard and a push-readiness recommendation. `technical-seo-geo-audit` writes `SEO-GEO-AUDIT.md` — findings grouped **per page** with a separate **SEO score** and **GEO score** and a copy-pasteable code fix for each; its rendered-DOM and Core Web Vitals checks prefer the chrome-devtools MCP server and fall back to optional Playwright + PageSpeed Insights. `web-perf-audit` writes **two** documents — `PERFORMANCE_AUDIT.md` and `PERFORMANCE_PLAN.md` — from field data first (CrUX p75, with its p75-only and 28-day-window limits stated in the report rather than papered over), and its `budgets.mjs` / `compare.mjs` exit non-zero so they work as CI gates. Shared features across the review skills: Quick/Standard/Deep modes and automatic stack detection. Two skills are the exception — instead of a report, `delegate` hands a task to another model's CLI headlessly and summarizes the answer, always confirming the exact command before it spends the target's credits, and `comment-cleanup` **edits your comments in place**, so its deliverable is a reviewable `git diff` rather than a document. Both gate on explicit confirmation before they act.
 
 ## Install (npm / npx)
 
@@ -93,6 +94,7 @@ After installing, invoke a skill by name.
 /laravel-pr-review Deep review of the current branch against origin/main.
 /pre-push-review Check my local changes before I push.
 /technical-seo-geo-audit Audit https://example.com — technical SEO and AI/LLM visibility.
+/web-perf-audit Audit https://example.com — Core Web Vitals, RUM and bundle size. Routes: /, /pricing.
 /comment-cleanup Clean up the comments across the repo — they're too long and unsorted.
 /delegate --to codex Refactor src/auth.ts and add tests. (edit mode; confirm first)
 ```
@@ -104,6 +106,7 @@ $nextjs-pr-review Review PR #123
 $laravel-pr-review Review the current branch, focus on the auth changes.
 $pre-push-review Score my staged changes before I push.
 $technical-seo-geo-audit Audit https://example.com for technical SEO and GEO.
+$web-perf-audit Why is our product page slow for real users on mobile?
 $comment-cleanup Sort the docblocks and drop the comments that restate the code, in src/.
 $delegate --to opencode Explain what this module does. (read-only, the default)
 ```
@@ -169,6 +172,20 @@ ai-code-skills/
     │       ├── lib/{fetch,html,findings,args}.mjs
     │       ├── fixtures/ selftest.mjs
     │       └── detect-stack.sh validate-report.py
+    ├── web-perf-audit/
+    │   ├── SKILL.md
+    │   ├── package.json                 # no required deps (Node 18+ native fetch)
+    │   ├── assets/{PERFORMANCE_AUDIT_TEMPLATE,PERFORMANCE_PLAN_TEMPLATE}.md
+    │   ├── assets/{rum-collector.js,budgets.example.json}
+    │   ├── references/{CORE_WEB_VITALS,RUM_IMPLEMENTATION,FIELD_DATA_SOURCES,DIAGNOSTICS,
+    │   │              NEXTJS_REACT,NETWORK_API,BUDGETS_REGRESSION,SEVERITY_RUBRIC,REFERENCES}.md
+    │   └── scripts/
+    │       ├── run.mjs crux.mjs psi.mjs static.mjs report.mjs
+    │       ├── budgets.mjs compare.mjs
+    │       ├── checks/{cwv,js,network,api,images,fonts,thirdparty,runtime,static}.mjs
+    │       ├── lib/{args,fetch,thresholds,percentiles,findings,measure,budgets,snapshot}.mjs
+    │       ├── fixtures/ selftest.mjs
+    │       └── detect-stack.sh validate-report.py
     ├── comment-cleanup/
     │   ├── SKILL.md
     │   ├── references/{COMMENT_STANDARD,LANGUAGE_CONVENTIONS,ANTIPATTERNS}.md
@@ -194,6 +211,11 @@ skills/pre-push-review/scripts/local-diff.sh         # local uncommitted diff (p
 skills/pre-push-review/scripts/local-diff.sh --staged   # or --unpushed / --all-local
 skills/<skill>/scripts/detect-stack.sh               # summarize the stack
 python3 skills/<skill>/scripts/validate-report.py <report>.md
+
+skills/web-perf-audit/scripts/crux.mjs               # CrUX field data (p75 + 25-week history)
+skills/web-perf-audit/scripts/psi.mjs                # Lighthouse lab + CrUX field via PageSpeed Insights
+skills/web-perf-audit/scripts/budgets.mjs            # budget gate — exits 1 on breach
+skills/web-perf-audit/scripts/compare.mjs            # per-deploy regression gate — exits 1 on regression
 
 skills/comment-cleanup/scripts/scan-comments.py      # inventory comments + flag cleanup candidates
 skills/comment-cleanup/scripts/scan-comments.py src/ --rules DUP,DEAD --summary-only

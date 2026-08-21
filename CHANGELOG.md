@@ -3,6 +3,47 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/) and the project uses semantic versioning.
 
+## [2.6.0]
+
+### Added
+- **`web-perf-audit` skill** — an evidence-based **web performance + RUM** audit that measures before it
+  recommends. It leads with **field data**: Core Web Vitals **p75** from the Chrome UX Report (via the CrUX
+  API, or PageSpeed Insights when no CrUX key is available), per route and per device, with the
+  good/needs-improvement/poor distribution and 25 weeks of history for trend detection.
+- **Two deliverables**, not one: `PERFORMANCE_AUDIT.md` — every substantiated finding with evidence, root
+  cause, user/business impact, a code-level fix and an expected improvement, ranked **P0–P3** — and
+  `PERFORMANCE_PLAN.md`, the same findings organized into six delivery phases with files, risk, complexity
+  and a verification method per task.
+- **Nine deterministic check modules** (`scripts/checks/`) covering Core Web Vitals attribution, JavaScript
+  weight and execution, network waterfalls and caching, API latency (slow endpoints, duplicates, N+1,
+  oversized payloads), images, fonts, third-party cost, post-load runtime (long tasks, INP attribution, route
+  transitions, memory) and codebase-mode causes (`"use client"` spread, `useEffect` data fetching, unmanaged
+  script tags, heavy dependencies, built chunk sizes, missing RUM instrumentation).
+- **Honest about what it cannot measure.** CrUX publishes **p75 only** — p50/p90 are interpolated from the
+  three-bin histogram and labelled `approx`, and p95/p99 fall in the open-ended tail bin and are reported as
+  `not available`, never estimated. Targets with no CrUX record (staging, authenticated, low-traffic) are
+  reported as `Info — not measured` in the executive summary, and a `fail` finding without evidence throws at
+  construction. `validate-report.py` fails any report that renders an unmeasured metric as a pass.
+- **CI gates**: `budgets.mjs` (measured vs budgets, exit 1 on breach, `not measured` never counts as a pass)
+  and `compare.mjs` (per-deploy regression across field p75, lab metrics and byte weights, exit 1 beyond
+  tolerance) — with the 28-day CrUX window called out so a same-day "field unchanged" is not read as a pass.
+- **Runtime diagnosis via chrome-devtools MCP** — Lighthouse measures a load; INP, route transitions,
+  animation cost and memory leaks live after it. `references/DIAGNOSTICS.md` is the capture playbook
+  (4× CPU + Slow 4G throttling, interaction traces, network log, heap snapshots) with the exact JSON shapes
+  `run.mjs --mcp <dir>` consumes.
+- Ships `assets/rum-collector.js` — a working `web-vitals` **attribution** beacon (LCP subparts, INP phases,
+  CLS sources, TTFB breakdown, Long Animation Frames) with route-pattern/device/connection/deploy dimensions
+  and explicit PII rules. It is an asset the audit recommends, never something it installs.
+- Ships nine references — `CORE_WEB_VITALS` (LCP four-subpart and INP three-phase decision trees),
+  `RUM_IMPLEMENTATION`, `FIELD_DATA_SOURCES`, `DIAGNOSTICS`, `NEXTJS_REACT`, `NETWORK_API`,
+  `BUDGETS_REGRESSION`, `SEVERITY_RUBRIC` and `REFERENCES` (citations to web.dev, CrUX/PSI API docs,
+  `web-vitals`, LoAF, MDN timing APIs, Lighthouse CI and the Next.js optimization docs).
+- Priority is **computed**, not guessed: `impact × frequency × user exposure × fix confidence`, with a
+  Critical finding never below P1 — so mobile findings outrank their identical desktop twins on exposure.
+- `npm test` now also runs the skill's `validate-report.py --self-test`, its fixture-driven `selftest.mjs`
+  (percentiles, thresholds, finding model, API normalizers, all nine check modules, report rendering and both
+  gates) and a syntax check of `detect-stack.sh`.
+
 ## [2.5.0]
 
 ### Added
