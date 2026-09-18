@@ -159,8 +159,9 @@ function parseArgs(argv) {
 }
 
 function helpText(skills) {
+  const width = Math.max(22, ...skills.map((s) => s.name.length));
   const list = skills.length
-    ? skills.map((s) => `    ${s.name.padEnd(22)} ${firstSentence(s.description, 60)}`).join("\n")
+    ? skills.map((s) => `    ${s.name.padEnd(width)} ${firstSentence(s.description, 60)}`).join("\n")
     : "    (none found)";
   return `ai-code-skills — install AI code-review Agent Skills for Claude Code & Codex
 

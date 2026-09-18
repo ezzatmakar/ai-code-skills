@@ -3,6 +3,53 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/) and the project uses semantic versioning.
 
+## [2.7.0]
+
+### Added
+- **`rephrase-code-comments` skill** — rewords existing code comments **in place** so they read concise,
+  direct, plain English, and human. It is the wording counterpart of `comment-cleanup`: that skill decides
+  whether a comment should exist and where it sits; this one fixes the sentences of the comments that stay.
+  Rules are grounded in the Google developer documentation style guide (voice, tense, word list, timeless
+  documentation), the Microsoft Writing Style Guide, the US Federal Plain Language Guidelines, ASD-STE100
+  Issue 9 (25-word descriptive sentences), ISO 24495-1:2023, and Wikipedia's *Signs of AI writing* — with
+  each source attributed per rule, including where a rule is a plain-English choice rather than an AI tell.
+- **Per-language doc-comment grammar** (`references/LANGUAGE_MOOD.md`): PEP 257 imperative vs. Google
+  Python "consistent within a file", third person for Javadoc, Google C++/JS, Rust RFC 1574 and Swift,
+  name-first for Go, StyleCop SA1623 only when configured. The scanner flags a summary that breaks its
+  language's authority or its file's majority, and never churns a whole file to switch mood.
+- **`scripts/scan-prose.py`** — dependency-free, string- and regex-literal-aware (it reuses
+  `comment-cleanup`'s extractor). Flags 18 rule IDs — `WORDY`, `FILLER`, `HEDGE`, `AI`, `OPENER`, `NARRATE`,
+  `PASSIVE`, `LONG`, `READ`, `MOOD`, `FORMAT`, `TERM`, `SPELL`, `SHOUT`, `VAGUE`, `NEG`, `TIME`, `SECRET` —
+  each with a suggested replacement. Masks code spans, identifiers, URLs, tag names, doctests, fenced
+  examples and aligned table rows so it never judges code as prose; skips non-English comments (never
+  translates), pragmas, licence headers, generated and vendored files; escalates a non-inclusive term when
+  code shares the name. `--since REF` limits the pass to files changed on a branch. 36 fixtures in `npm test`.
+- **`code-architecture-drawer` skill** — reverse-engineers a codebase's architecture and **draws** it as C4
+  diagrams in GitHub-rendered Mermaid (system context, containers, components per container, traced runtime
+  flows, data model, deployment), then reports **architecture gaps** against ISO/IEC/IEEE 42010:2022, arc42,
+  the C4 notation checklist, ISO/IEC 25010:2023, Clean Architecture's dependency rule, Martin's ADP/SDP/SAP,
+  Ports and Adapters, Twelve-Factor, AWS/Azure Well-Architected reliability anti-patterns, and ADRs (Nygard,
+  MADR 4.0). Writes one `ARCHITECTURE.md` in arc42 order; every gap carries evidence, a severity, the
+  standard it breaks, a concrete fix and a Confirmed/Likely confidence.
+- **`scripts/scan-architecture.py`** — dependency-free import-graph scanner for JS/TS (tsconfig `paths`,
+  workspaces, `.js`→`.ts` ESM specifiers), Python, Go (`go.mod`), PHP (composer PSR-4), Java/Kotlin/Scala,
+  C#, Ruby, Rust, Dart and Swift. Groups files into components (source roots are free, monorepo groups count
+  once, loose composition-root files get their own node so they never fake a cycle), computes Ca/Ce/
+  instability/abstractness/distance, finds component and file cycles (Tarjan), layer violations, SDP
+  breaks, SDK sprawl, god files, config sprawl and shared databases; detects entry points, frameworks,
+  external systems (by manifest and import), Docker Compose services, IaC, CI, ADRs, CODEOWNERS, API
+  contracts, health endpoints and fitness-function tools. Committed `.env` files are classified by secret-like
+  key **names** only — values never leave the file. `--scope PATH` draws one container's components;
+  `--mermaid` emits titled, legended diagrams with cycles in red.
+- **`scripts/validate-report.py`** (sections in order, no placeholders, Mermaid blocks with a known type, a
+  title, a legend and labelled relationships on C4 views, size limits, GitHub-safe syntax, complete gap rows,
+  no scorecard Pass without evidence) and **`scripts/render-html.py`** (one standalone page with live
+  diagrams, light/dark, escaped content). All three scripts self-test in `npm test`.
+
+### Changed
+- `comment-cleanup` description now routes rewording requests to `rephrase-code-comments`.
+- CLI help aligns skill names of any length.
+
 ## [2.6.0]
 
 ### Added

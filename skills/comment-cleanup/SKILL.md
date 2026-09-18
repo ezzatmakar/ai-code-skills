@@ -1,11 +1,11 @@
 ---
 name: comment-cleanup
-description: Sweeps a codebase and rewrites its code comments in place to one standard — short (1-line default, 3-line cap), sorted (canonical docblock tag order), correctly placed (attached to the declaration, no detached or trailing essays), and consistently marked (TODO with a tracked issue). Deletes comments that restate the code, banner art, commented-out blocks, changelog-in-comments, and assistant filler; adds a docblock only to non-obvious public API. Use when asked to clean up, shorten, sort, standardize, or fix code comments and docblocks — "my comments are too long", "sort the docblocks", "remove the useless comments", "normalize the JSDoc/PHPDoc/docstrings". Edits comments only, never executable code, and always previews the plan before touching a file. Do not use for writing prose documentation, README files, PR review comments, or commenting out code.
+description: Sweeps a codebase and rewrites its code comments in place to one standard — short (1-line default, 3-line cap), sorted (canonical docblock tag order), correctly placed (attached to the declaration, no detached or trailing essays), and consistently marked (TODO with a tracked issue). Deletes comments that restate the code, banner art, commented-out blocks, changelog-in-comments, and assistant filler; adds a docblock only to non-obvious public API. Use when asked to clean up, shorten, sort, standardize, or fix code comments and docblocks — "my comments are too long", "sort the docblocks", "remove the useless comments", "normalize the JSDoc/PHPDoc/docstrings". Edits comments only, never executable code, and always previews the plan before touching a file. Do not use for rewording comments into plainer, more direct English (use rephrase-code-comments), writing prose documentation, README files, PR review comments, or commenting out code.
 license: MIT
 compatibility: Requires git and python3 (3.8+, standard library only). Stack-agnostic — handles C-style, hash, SQL, HTML, CSS, Lua, and Python comment syntax, and defers to the repository's own linter configuration when one exists. Designed for Codex and Claude Code using the Agent Skills open standard.
 metadata:
   author: Ezzat Malak
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 
 # Comment Cleanup

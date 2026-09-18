@@ -1,6 +1,6 @@
 # ai-code-skills
 
-A growing collection of **Agent Skills** for **Claude Code**, **Codex**, and **OpenCode**. Review code for **security, performance, and clean code** — pull requests *or* your local changes before you push — **clean up your code comments** to one short, sorted standard, audit a site's **technical SEO + GEO** (Generative Engine Optimization) for search and AI-assistant visibility, audit **web performance and RUM** against real-user field data (Core Web Vitals p75 from CrUX/PageSpeed Insights), and **delegate a task to another model's CLI** (Codex, OpenCode, Claude Code, Cursor, Gemini, Aider). Most skills write their results to one evidence-based Markdown report with a clear verdict.
+A growing collection of **Agent Skills** for **Claude Code**, **Codex**, and **OpenCode**. Review code for **security, performance, and clean code** — pull requests *or* your local changes before you push — **clean up your code comments** to one short, sorted standard, **reword them** into concise, plain, human English, **draw your codebase's architecture** as C4 diagrams with its gaps against published standards, audit a site's **technical SEO + GEO** (Generative Engine Optimization) for search and AI-assistant visibility, audit **web performance and RUM** against real-user field data (Core Web Vitals p75 from CrUX/PageSpeed Insights), and **delegate a task to another model's CLI** (Codex, OpenCode, Claude Code, Cursor, Gemini, Aider). Most skills write their results to one evidence-based Markdown report with a clear verdict.
 
 Each skill is self-contained. You pick which ones to install.
 
@@ -14,11 +14,13 @@ Each skill is self-contained. You pick which ones to install.
 | **`technical-seo-geo-audit`** | A **live URL** or a **codebase** for technical SEO + **GEO** (AI/LLM visibility) | Raw-vs-rendered **SSR diff** (empty-shell detection), Core Web Vitals, structured data, metadata, semantic HTML, redirects, **AI-crawler access** (GPTBot/ClaudeBot/PerplexityBot/…) and `llms.txt`; one **per-page** report with a separate **SEO score** and **GEO score** and a code-level fix per finding |
 | **`web-perf-audit`** | A **live URL** or a **codebase**, for web performance + **RUM** (field data) | Measures **before** it recommends: Core Web Vitals **p75 from real field data** (CrUX + PageSpeed Insights), Lighthouse lab analysis, response headers and optional chrome-devtools MCP traces for **INP**, route transitions and memory. Covers LCP/INP/CLS/TTFB root causes, JS bundles & execution, network waterfalls, API latency & N+1, images, fonts, third-party cost, caching, and mobile-vs-desktop. Writes **`PERFORMANCE_AUDIT.md`** (every finding ranked P0–P3) plus **`PERFORMANCE_PLAN.md`** (six delivery phases), and ships **budget** and **per-deploy regression** gates. Never invents a number — anything it could not measure is labelled, never passed |
 | **`comment-cleanup`** | Your **code comments**, repo-wide or in the paths you name, any language | Rewrites comments **in place** to one standard — **short** (1-line default, 3-line cap), **sorted** (canonical `@param` → `@return` → `@throws` order), **placed** (attached to the declaration, no detached or trailing essays), **marked** (`TODO(#123):`). Deletes comments that restate the code, banner art, commented-out blocks, changelog-in-comments and assistant filler; adds a docblock only to non-obvious public API. **Comments only — never executable code**, and always previews the plan first |
+| **`rephrase-code-comments`** | The **wording** of your code comments, repo-wide, in the paths you name, or only what changed since a branch (`--since origin/main`) | Rewords comments **in place** so they read **concise, direct, plain, human**, measured against the Google developer documentation style guide, Microsoft Writing Style Guide, US Federal Plain Language Guidelines, ASD-STE100 (25-word sentences) and each language's doc-comment grammar (PEP 257 imperative, Javadoc/Go/Rust third person, Go name-first). 18 rule IDs: wordy phrases, filler, hedges, **AI-sounding vocabulary**, "This function is used to…" openers, tutorial voice, passive voice, long sentences, wrong summary mood, time words that rot, non-inclusive terms, shouting, double negatives, misspellings. **Keeps every fact, identifier and number**; never translates; escalates comments that contradict the code. Comments only, preview first |
+| **`code-architecture-drawer`** | A **codebase**, whole repo or one container (`--scope apps/api`), any language | Reverse-engineers the architecture from the import graph and **draws it** as C4 diagrams in GitHub-rendered **Mermaid**: system context, containers (from Docker Compose, IaC and detected external systems), components per container, traced runtime flows, data model and deployment. Measures coupling (Ca/Ce/instability/abstractness), **dependency cycles**, **layer violations**, SDK sprawl, god files and shared databases, then reports **architecture gaps** against ISO 42010, arc42, C4, ISO 25010:2023, Clean Architecture, ADP/SDP/SAP, Twelve-Factor, Well-Architected and ADRs, each with evidence, severity, the standard, a fix and a confidence. Writes one validated **`ARCHITECTURE.md`** (optional standalone HTML). Read-only on source |
 | **`delegate`** | A **task** you hand to a named model CLI (Codex, OpenCode, Claude Code, Cursor, Gemini, Aider) | Explicit, **headless** delegation — builds the non-interactive command, previews it (`--dry-run`), runs it (**read-only by default**, `edit` on request), captures the result, and summarizes it back; resolves off-PATH `codex`, degrades when a target isn't installed. **Not a router** — you name the target |
 
 More skills will be added over time — `list` always shows what's available.
 
-Most reviews produce **one** Markdown report with evidence, severity, confidence, rationale, recommendations, verification steps, and references. The PR reviewers write `PR_REVIEW.md` with a merge verdict and support PR-number-aware diffs and opt-in inline PR comments; `pre-push-review` writes `PRE_PUSH_REVIEW.md` from your local diff with a Pass/Warn/Fail scorecard and a push-readiness recommendation. `technical-seo-geo-audit` writes `SEO-GEO-AUDIT.md` — findings grouped **per page** with a separate **SEO score** and **GEO score** and a copy-pasteable code fix for each; its rendered-DOM and Core Web Vitals checks prefer the chrome-devtools MCP server and fall back to optional Playwright + PageSpeed Insights. `web-perf-audit` writes **two** documents — `PERFORMANCE_AUDIT.md` and `PERFORMANCE_PLAN.md` — from field data first (CrUX p75, with its p75-only and 28-day-window limits stated in the report rather than papered over), and its `budgets.mjs` / `compare.mjs` exit non-zero so they work as CI gates. Shared features across the review skills: Quick/Standard/Deep modes and automatic stack detection. Two skills are the exception — instead of a report, `delegate` hands a task to another model's CLI headlessly and summarizes the answer, always confirming the exact command before it spends the target's credits, and `comment-cleanup` **edits your comments in place**, so its deliverable is a reviewable `git diff` rather than a document. Both gate on explicit confirmation before they act.
+Most reviews produce **one** Markdown report with evidence, severity, confidence, rationale, recommendations, verification steps, and references. The PR reviewers write `PR_REVIEW.md` with a merge verdict and support PR-number-aware diffs and opt-in inline PR comments; `pre-push-review` writes `PRE_PUSH_REVIEW.md` from your local diff with a Pass/Warn/Fail scorecard and a push-readiness recommendation. `technical-seo-geo-audit` writes `SEO-GEO-AUDIT.md` — findings grouped **per page** with a separate **SEO score** and **GEO score** and a copy-pasteable code fix for each; its rendered-DOM and Core Web Vitals checks prefer the chrome-devtools MCP server and fall back to optional Playwright + PageSpeed Insights. `web-perf-audit` writes **two** documents — `PERFORMANCE_AUDIT.md` and `PERFORMANCE_PLAN.md` — from field data first (CrUX p75, with its p75-only and 28-day-window limits stated in the report rather than papered over), and its `budgets.mjs` / `compare.mjs` exit non-zero so they work as CI gates. Shared features across the review skills: Quick/Standard/Deep modes and automatic stack detection. `code-architecture-drawer` writes `ARCHITECTURE.md` in arc42 section order — C4 diagrams in Mermaid (each with a title, a legend and labelled relationships, checked by `validate-report.py`) plus a gap table and a standards scorecard — and can render it to one HTML page with live diagrams. Three skills are the exception — instead of a report, `delegate` hands a task to another model's CLI headlessly and summarizes the answer, always confirming the exact command before it spends the target's credits, while `comment-cleanup` and `rephrase-code-comments` **edit your comments in place** (the first fixes structure, the second fixes wording), so their deliverable is a reviewable `git diff` rather than a document. All three gate on explicit confirmation before they act.
 
 ## Install (npm / npx)
 
@@ -96,6 +98,8 @@ After installing, invoke a skill by name.
 /technical-seo-geo-audit Audit https://example.com — technical SEO and AI/LLM visibility.
 /web-perf-audit Audit https://example.com — Core Web Vitals, RUM and bundle size. Routes: /, /pricing.
 /comment-cleanup Clean up the comments across the repo — they're too long and unsorted.
+/rephrase-code-comments Our comments sound like AI and ramble. Make them plain and direct — only files changed since origin/main.
+/code-architecture-drawer Map this repo's architecture, draw it, and list the gaps. Deep mode, and export HTML.
 /delegate --to codex Refactor src/auth.ts and add tests. (edit mode; confirm first)
 ```
 
@@ -108,6 +112,8 @@ $pre-push-review Score my staged changes before I push.
 $technical-seo-geo-audit Audit https://example.com for technical SEO and GEO.
 $web-perf-audit Why is our product page slow for real users on mobile?
 $comment-cleanup Sort the docblocks and drop the comments that restate the code, in src/.
+$rephrase-code-comments Rewrite the docstrings in src/ in plain English; keep PEP 257 imperative mood.
+$code-architecture-drawer Draw the C4 container and component diagrams for apps/api and check for dependency cycles.
 $delegate --to opencode Explain what this module does. (read-only, the default)
 ```
 
@@ -186,6 +192,15 @@ ai-code-skills/
     │       ├── lib/{args,fetch,thresholds,percentiles,findings,measure,budgets,snapshot}.mjs
     │       ├── fixtures/ selftest.mjs
     │       └── detect-stack.sh validate-report.py
+    ├── rephrase-code-comments/
+    │   ├── SKILL.md
+    │   ├── references/{WRITING_STANDARD,REWRITE_RULES,LANGUAGE_MOOD,WORD_LIST}.md
+    │   └── scripts/{scan-prose.py,detect-stack.sh}
+    ├── code-architecture-drawer/
+    │   ├── SKILL.md
+    │   ├── assets/ARCHITECTURE_TEMPLATE.md
+    │   ├── references/{ARCHITECTURE_STANDARDS,STRUCTURAL_RULES,GAP_CATALOGUE,DIAGRAM_GUIDE}.md
+    │   └── scripts/{scan-architecture.py,validate-report.py,render-html.py,detect-stack.sh}
     ├── comment-cleanup/
     │   ├── SKILL.md
     │   ├── references/{COMMENT_STANDARD,LANGUAGE_CONVENTIONS,ANTIPATTERNS}.md
@@ -220,6 +235,16 @@ skills/web-perf-audit/scripts/compare.mjs            # per-deploy regression gat
 skills/comment-cleanup/scripts/scan-comments.py      # inventory comments + flag cleanup candidates
 skills/comment-cleanup/scripts/scan-comments.py src/ --rules DUP,DEAD --summary-only
 skills/comment-cleanup/scripts/scan-comments.py --json   # structured findings
+
+skills/rephrase-code-comments/scripts/scan-prose.py                 # flag wordy / vague / robotic comment wording
+skills/rephrase-code-comments/scripts/scan-prose.py --since origin/main --rules WORDY,FILLER,AI
+skills/rephrase-code-comments/scripts/scan-prose.py --python-mood imperative --json
+
+skills/code-architecture-drawer/scripts/scan-architecture.py                     # components, metrics, cycles, gap signals
+skills/code-architecture-drawer/scripts/scan-architecture.py --mermaid all       # C4-style container + component diagrams
+skills/code-architecture-drawer/scripts/scan-architecture.py --scope apps/api --mermaid components
+python3 skills/code-architecture-drawer/scripts/validate-report.py ARCHITECTURE.md
+python3 skills/code-architecture-drawer/scripts/render-html.py ARCHITECTURE.md   # standalone HTML, live diagrams
 
 skills/delegate/scripts/detect-clis.sh               # which model CLIs are installed + how to call each
 skills/delegate/scripts/delegate.sh --to opencode --dry-run "hi"   # preview the resolved command

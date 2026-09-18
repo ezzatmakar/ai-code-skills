@@ -1,7 +1,7 @@
 {
   "name": "ai-code-skills",
-  "version": "2.6.0",
-  "description": "Agent Skills for Claude Code, Codex, and OpenCode that review code for security, performance, and clean code, then write one evidence-based Markdown report. Includes Next.js/React and Laravel/PHP pull-request reviewers, a stack-agnostic pre-push reviewer that scores your local changes (Security, Performance, Clean Code) as Pass/Warn/Fail with a push-readiness verdict, a developer-focused technical SEO + GEO (Generative Engine Optimization) auditor that produces a per-page README report with code-level fixes, a web performance + RUM auditor that measures Core Web Vitals p75 from real field data (CrUX/PageSpeed Insights) before it recommends anything and ships budget and per-deploy regression gates, a comment-cleanup skill that rewrites your code comments in place to one short, sorted, correctly placed standard (comments only, never executable code), and a delegate dispatcher that hands a task to another model's CLI (Codex, OpenCode, Claude Code, Cursor, Gemini, Aider) headlessly and summarizes the result. Pick which skills to install.",
+  "version": "2.7.0",
+  "description": "Agent Skills for Claude Code, Codex, and OpenCode that review code for security, performance, and clean code, then write one evidence-based Markdown report. Includes Next.js/React and Laravel/PHP pull-request reviewers, a stack-agnostic pre-push reviewer that scores your local changes (Security, Performance, Clean Code) as Pass/Warn/Fail with a push-readiness verdict, a developer-focused technical SEO + GEO (Generative Engine Optimization) auditor that produces a per-page README report with code-level fixes, a web performance + RUM auditor that measures Core Web Vitals p75 from real field data (CrUX/PageSpeed Insights) before it recommends anything and ships budget and per-deploy regression gates, a comment-cleanup skill that rewrites your code comments in place to one short, sorted, correctly placed standard (comments only, never executable code), a rephrase-code-comments skill that rewords comments into concise, direct, plain, human English against published style standards and each language's doc-comment grammar, a code-architecture-drawer skill that reverse-engineers a codebase into C4 diagrams in GitHub-rendered Mermaid and reports architecture gaps (cycles, layer violations, missing ADRs/contracts/observability) against ISO 42010, arc42, C4, ISO 25010 and Clean Architecture, and a delegate dispatcher that hands a task to another model's CLI (Codex, OpenCode, Claude Code, Cursor, Gemini, Aider) headlessly and summarizes the result. Pick which skills to install.",
   "bin": {
     "ai-code-skills": "bin/cli.js"
   },
@@ -14,7 +14,7 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "test": "node bin/cli.js list >/dev/null && node bin/cli.js --help >/dev/null && python3 skills/nextjs-pr-review/scripts/validate-report.py --self-test && python3 skills/laravel-pr-review/scripts/validate-report.py --self-test && python3 skills/pre-push-review/scripts/validate-report.py --self-test && python3 skills/technical-seo-geo-audit/scripts/validate-report.py --self-test && node skills/technical-seo-geo-audit/scripts/selftest.mjs && bash -n skills/delegate/scripts/detect-clis.sh && bash -n skills/delegate/scripts/delegate.sh && bash skills/delegate/scripts/delegate.sh --help >/dev/null && bash skills/delegate/scripts/detect-clis.sh >/dev/null && python3 skills/comment-cleanup/scripts/scan-comments.py --self-test && bash -n skills/comment-cleanup/scripts/detect-stack.sh && python3 skills/web-perf-audit/scripts/validate-report.py --self-test && node skills/web-perf-audit/scripts/selftest.mjs && bash -n skills/web-perf-audit/scripts/detect-stack.sh"
+    "test": "node bin/cli.js list >/dev/null && node bin/cli.js --help >/dev/null && python3 skills/nextjs-pr-review/scripts/validate-report.py --self-test && python3 skills/laravel-pr-review/scripts/validate-report.py --self-test && python3 skills/pre-push-review/scripts/validate-report.py --self-test && python3 skills/technical-seo-geo-audit/scripts/validate-report.py --self-test && node skills/technical-seo-geo-audit/scripts/selftest.mjs && bash -n skills/delegate/scripts/detect-clis.sh && bash -n skills/delegate/scripts/delegate.sh && bash skills/delegate/scripts/delegate.sh --help >/dev/null && bash skills/delegate/scripts/detect-clis.sh >/dev/null && python3 skills/comment-cleanup/scripts/scan-comments.py --self-test && bash -n skills/comment-cleanup/scripts/detect-stack.sh && python3 skills/web-perf-audit/scripts/validate-report.py --self-test && node skills/web-perf-audit/scripts/selftest.mjs && bash -n skills/web-perf-audit/scripts/detect-stack.sh && python3 skills/rephrase-code-comments/scripts/scan-prose.py --self-test && bash -n skills/rephrase-code-comments/scripts/detect-stack.sh && python3 skills/code-architecture-drawer/scripts/scan-architecture.py --self-test && python3 skills/code-architecture-drawer/scripts/validate-report.py --self-test && python3 skills/code-architecture-drawer/scripts/render-html.py --self-test && bash -n skills/code-architecture-drawer/scripts/detect-stack.sh"
   },
   "keywords": [
     "code-review",
@@ -63,7 +63,21 @@
     "crux",
     "lighthouse",
     "performance-budget",
-    "page-speed"
+    "page-speed",
+    "plain-language",
+    "technical-writing",
+    "docstrings",
+    "style-guide",
+    "architecture",
+    "software-architecture",
+    "c4-model",
+    "arc42",
+    "mermaid",
+    "diagrams",
+    "dependency-graph",
+    "circular-dependencies",
+    "clean-architecture",
+    "adr"
   ],
   "author": "Ezzat Malak",
   "license": "MIT",
